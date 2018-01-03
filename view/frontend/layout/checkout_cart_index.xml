@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="checkout.cart.form.before">
+            <block class="Cleargo\AigleClearomniConnector\Block\Store" name="store.selector" before="-"
+                   template="Cleargo_AigleClearomniConnector::store.phtml">
+                <arguments>
+                    <argument name="includejs" xsi:type="boolean">true</argument>
+                    <argument name="currentProduct" xsi:type="boolean">false</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

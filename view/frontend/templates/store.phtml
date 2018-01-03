@@ -1,0 +1,47 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+$objectManager=\Magento\Framework\App\ObjectManager::getInstance();
+$helper=$objectManager->get('Cleargo\AigleClearomniConnector\Helper\Data');
+if($block->currentProduct()){
+    $availability=$objectManager->create('Cleargo\AigleClearomniConnector\Block\Catalog\Product\Retailer\Availability');
+    $jsConfig=$availability->getJsLayout();
+    $storeAvail=json_decode($jsConfig,true);
+    $storeAvail=$storeAvail['components']['catalog-product-retailer-availability']['storeOffers'];
+}else {
+    $storeAvail = $helper->getCartAvailableInStore();
+}
+//exit;
+?>
+<?php if(!empty($storeAvail)):?>
+    <select name="store" id="selectedStore" class="store-selector">
+        <?php foreach ($storeAvail as $key=>$value):?>
+            <option value="<?php echo $value['entity_id'];?>" data-availability="<?php echo $value['finalAvailability']?>" data-minday="<?php echo $value['finalMinDay']; ?>" data-maxday="<?php echo $value['finalMaxDay']; ?>" data-available="<?php echo $value['available']?'true':'false'; ?>"><?php echo $value['name'];?></option>
+        <?php endforeach;?>
+    </select>
+<?php endif; ?>
+<?php if($block->includeJs()):?>
+    <script type="text/javascript">
+        require(['jquery'],function($){
+            $(document).ready(function(){
+               $('.store-selector').change(function(){
+                   console.log('changed');
+                   var selected=$(this).find('option:selected');
+                   if(selected.data('available')=='true'||selected.data('available')==true){
+                       $('body').trigger('processStart');
+                        $.ajax({
+                            'url':'/cnr/store/set',
+                            'data':{
+                                'store':selected.val()
+                            }
+                        }).done(function(){
+                            $('body').trigger('processStop');
+                        });
+                   }
+               });
+            });
+        });
+    </script>
+<?php endif; ?>

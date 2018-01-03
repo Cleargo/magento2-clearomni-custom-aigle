@@ -1,0 +1,128 @@
+<?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future.
+ *
+ *
+ * @category  Smile
+ * @package   Smile\RetailerOffer
+ * @author    Romain Ruaud <romain.ruaud@smile.fr>
+ * @copyright 2017 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+
+/**
+ * Template to display store availability on product view.
+ *
+ * @var $block \Cleargo\AigleClearomniConnector\Block\Catalog\Product\Retailer\Availability
+ */
+$product = $block->getProduct();
+?>
+<div id="catalog-product-retailer-availability" data-block="catalog-product-retailer-availability"
+     class="block catalog-product-retailer-availability">
+    <div class="block catalog-product-stores-availability-content"
+         data-role="dropdownDialog"
+         data-bind="scope: 'catalog-product-retailer-availability'"
+         data-mage-init='{
+           "Magento_Ui/js/modal/modal":{
+             "trigger":".showavailability",
+             "buttons":[],
+             "modal":true,
+             "title":"view reserve store"
+           }
+         }'>
+        <table class="itemPreview">
+            <thead>
+
+            </thead>
+            <tfoot>
+
+            </tfoot>
+            <tbody>
+            <tr>
+                <td>
+                    <img src="<?php echo $block->getProductImageUrl(); ?>"/>
+                </td>
+                <td>
+                    <span class="productName"><?php echo $product->getName() ?></span>
+                    <span class="brand"><?php echo $product->getBrand() ?></span>
+                    <div class="additional-attr">
+                    </div>
+                </td>
+                <td>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+
+        <div class="store-offers-list" data-role="content">
+            <span class="storeTitle"><?php echo __('Available Store') ?>:</span>
+            <select data-bind="foreach: displayedOffers()" id="storeSelect" name="storeSelect">
+                <option data-bind="{
+                    text: name,
+                    attr: { value: code,'data-availability':availability,'data-name':name  }
+                }"></option>
+            </select>
+            <!--            <ul data-bind="foreach: displayedOffers()">-->
+            <!--                <li data-bind="template: $parent.storeOffersListTemplate" class="result-item"></li>-->
+            <!--            </ul>-->
+            <button type="button" data-role="storeConfirm">
+                Confirm
+            </button>
+        </div>
+    </div>
+    <div class="catalog-product-retailer-availability-content">
+        <div class="title">
+            <span><?php echo __("Store availability : "); ?></span>
+        </div>
+        <div class="content-wrapper" data-bind="scope: 'catalog-product-retailer-availability'">
+            <div data-bind="visible: hasStore()" class="current-store">
+                <p class="availability"
+                   data-bind="css: { inStock: getIsInStock() == true, outOfStock: getIsInStock() == false }">
+                    <span data-bind="text: getStoreName() + ':' " class="store-name-value"></span>
+                    <span data-bind="html: getStockLabel()" class="stock-label"></span>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="action showavailability" data-bind="scope: 'catalog-product-retailer-availability'">
+        <a href="#" class="text" data-bind="text: getLinkLabel()"></a>
+    </div>
+</div>
+
+<script type="text/x-magento-init">
+    { "*" : { "Magento_Ui/js/core/app": <?php echo /* @noEscape */
+    $block->getJsLayout(); ?> } }
+
+</script>
+<script type="text/javascript">
+    require(['jquery'], function ($) {
+        $(document).ready(function () {
+            $('div.block.catalog-product-stores-availability-content').on('opened', function () {
+                if ($('.product-options-wrapper').size() <= 0) {//this product is simple
+                    return;
+                }
+                $('.additional-attr').html($('.product-options-wrapper')[0].outerHTML);
+                $('.additional-attr .swatch-option').not('.selected').remove();
+                $('.additional-attr .swatch-option').removeClass('selected').removeClass('swatch-option').addClass('option');
+                //text swatch
+                $('.additional-attr .text.option').remove();
+            });
+            //bind continue button
+            $(document).on('click', 'button[data-role="storeConfirm"]', function () {
+                var selectedOption=$('#storeSelect option:selected');
+                if($('#storeSelect').val()==''||selectedOption.data('availability')=='false'){
+                    return;
+                }
+                $('#store').val($('#storeSelect').val());
+                $('#storeResult').removeClass('empty');
+                $('#storeResult').text(selectedOption.data('name')+' '+(selectedOption.data('availability')?'Available':'Unavailable'));
+                $('div.block.catalog-product-stores-availability-content').trigger('closeModal');
+                jQuery('#product_addtocart_form').submit();
+            });
+        })
+    })
+</script>

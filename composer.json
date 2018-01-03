@@ -1,0 +1,21 @@
+{
+    "name": "cleargo/module-clearomniconnector",
+    "description": "Clearomni Click and reserve and connect (depends on elasticsuite and elasticsuite-for-retailer)",
+    "license": "proprietary",
+    "authors": [
+        {
+            "email": "info@mage2gen.com",
+            "name": "Mage2Gen"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Cleargo\\AigleClearomniConnector\\": ""
+        }
+    }
+}

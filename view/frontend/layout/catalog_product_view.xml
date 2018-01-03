@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page layout="1column" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <referenceBlock name="smile.retaileroffer.product.availability">
+        <action method="setTemplate">
+            <argument name="template" xsi:type="string">Cleargo_AigleClearomniConnector::product/view/retailer/availability.phtml</argument>
+        </action>
+    </referenceBlock>
+    <referenceBlock name="product.info.addtocart">
+        <block class="Cleargo\AigleClearomniConnector\Block\Store" name="store.selector.simple" template="Cleargo_AigleClearomniConnector::store.phtml">
+            <arguments>
+                <argument name="includejs" xsi:type="boolean">false</argument>
+                <argument name="currentProduct" xsi:type="boolean">true</argument>
+            </arguments>
+        </block>
+    </referenceBlock>
+    <referenceBlock name="product.info.addtocart.additional">
+        <block class="Cleargo\AigleClearomniConnector\Block\Store" name="store.selector.config" template="Cleargo_AigleClearomniConnector::store.phtml">
+            <arguments>
+                <argument name="includejs" xsi:type="boolean">false</argument>
+                <argument name="currentProduct" xsi:type="boolean">true</argument>
+            </arguments>
+        </block>
+    </referenceBlock>
+</page>

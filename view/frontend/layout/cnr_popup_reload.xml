@@ -1,0 +1,31 @@
+
+<page layout="1column" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <block class="Cleargo\AigleClearomniConnector\Block\CnRPopUp" name="product.info.cnrpopup" template="Magento_Catalog::product/view/cnrpopup.phtml" after="-">
+        <block class="Cleargo\AigleClearomniConnector\Block\Form\Login" name="customer_form_login" template="Magento_Customer::form/login.phtml">
+            <container name="form.additional.info" as="form_additional_info"/>
+        </block>
+        <block class="Magento\Catalog\Block\Product\View\Gallery" name="product.info.media.image2" template="Magento_Catalog::product/view/gallerypopup.phtml"/>
+        <block class="Magento\Catalog\Pricing\Render" name="product.popup.price">
+            <arguments>
+                <argument name="price_render" xsi:type="string">product.price.render.default</argument>
+                <argument name="price_type_code" xsi:type="string">final_price</argument>
+                <argument name="zone" xsi:type="string">item_view</argument>
+            </arguments>
+        </block>
+        <block class="Cleargo\AigleClearomniConnector\Block\View\OpeningHours" name="smile_store_locator_retailer_view.opening_hours" template="Smile_StoreLocator::view/opening-hours.phtml">
+            <arguments>
+                <argument name="jsLayout" xsi:type="array">
+                    <item name="components" xsi:type="array">
+                        <item name="smile-storelocator-store" xsi:type="array">
+                            <item name="component" xsi:type="string">Cleargo_AigleClearomniConnector/js/model/store</item>
+                            <item name="schedule" xsi:type="array">
+                                <item name="openingHoursTemplate" xsi:type="string">Cleargo_AigleClearomniConnector/retailer/opening-hours</item>
+                                <item name="specialOpeningHoursTemplate" xsi:type="string">Smile_StoreLocator/retailer/special-opening-hours</item>
+                            </item>
+                        </item>
+                    </item>
+                </argument>
+            </arguments>
+        </block>
+    </block>
+</page>
