@@ -32,6 +32,25 @@ class Submit extends \Magento\Framework\App\Action\Action
     protected $subscriberFactory;
 
     /**
+     * @var \Magento\Sales\Model\OrderFactory
+     */
+    protected $orderFactory;
+
+    /**
+     * @var \Magento\Sales\Model\Service\InvoiceService
+     */
+    protected $invoiceService;
+
+    /**
+     * @var \Magento\Framework\DB\Transaction
+     */
+    protected $transaction;
+
+    /**
+     * @var \Magento\Sales\Model\Order\Email\Sender\InvoiceSender
+     */
+    protected $invoiceSender;
+    /**
      * Constructor
      *
      * @param \Magento\Framework\App\Action\Context $context
@@ -45,7 +64,11 @@ class Submit extends \Magento\Framework\App\Action\Action
         \Smile\Retailer\Api\RetailerRepositoryInterface $retailerRepository,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Customer\Model\Session $customerSession,
-        \Magento\Newsletter\Model\SubscriberFactory $subscriberFactory
+        \Magento\Newsletter\Model\SubscriberFactory $subscriberFactory,
+        \Magento\Sales\Model\OrderFactory $orderFactory,
+        \Magento\Sales\Model\Service\InvoiceService $invoiceService,
+        \Magento\Framework\DB\Transaction $transaction,
+        \Magento\Sales\Model\Order\Email\Sender\InvoiceSender $invoiceSender
     )
     {
         $this->resultPageFactory = $resultPageFactory;
@@ -55,6 +78,10 @@ class Submit extends \Magento\Framework\App\Action\Action
         $this->storeManager=$storeManager;
         $this->retailerRepository=$retailerRepository;
         $this->subscriberFactory = $subscriberFactory;
+        $this->orderFactory=$orderFactory;
+        $this->invoiceService=$invoiceService;
+        $this->transaction=$transaction;
+        $this->invoiceSender=$invoiceSender;
         parent::__construct($context);
     }
 
@@ -108,6 +135,39 @@ class Submit extends \Magento\Framework\App\Action\Action
             'result' => 'true',
             'data' => $data
         ];
+        //create invoice
+        $orderId=$data;
+        $order=$this->orderFactory->create()->load($orderId);
+        if($order->getPayment()->getMethod()=='clickandreserve'){
+            if($order->canInvoice()){
+                $invoice_object = $this->invoiceService->prepareInvoice($order);
+
+                // Make sure there is a qty on the invoice
+                if (!$invoice_object->getTotalQty()) {
+                    throw new \Magento\Framework\Exception\LocalizedException(
+                        __('You can\'t create an invoice without products.'));
+                }
+                // Register as invoice item
+                $invoice_object->setRequestedCaptureCase(\Magento\Sales\Model\Order\Invoice::CAPTURE_OFFLINE);
+                $invoice_object->register();
+
+                // Save the invoice to the order
+                $transaction = $this->transaction
+                    ->addObject($invoice_object)
+                    ->addObject($invoice_object->getOrder());
+
+                $transaction->save();
+                // Magento\Sales\Model\Order\Email\Sender\InvoiceSender
+                //$this->
+                $this->invoiceSender->send($invoice_object);
+                $comment = "Invoice sent." ;
+                $order->addStatusHistoryComment(
+                    __($comment, $invoice_object->getId()))
+                    ->setIsCustomerNotified(true)
+                    ->save();
+            }
+
+        }
         try {
             return $this->jsonResponse($result);
         } catch (\Magento\Framework\Exception\LocalizedException $e) {
