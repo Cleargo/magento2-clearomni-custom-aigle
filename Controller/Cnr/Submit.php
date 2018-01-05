@@ -159,8 +159,8 @@ class Submit extends \Magento\Framework\App\Action\Action
                 $transaction->save();
                 // Magento\Sales\Model\Order\Email\Sender\InvoiceSender
                 //$this->
-                $this->invoiceSender->send($invoice_object);
-                $comment = "Invoice sent." ;
+//                $this->invoiceSender->send($invoice_object);
+                $comment = "Invoice created." ;
                 $order->addStatusHistoryComment(
                     __($comment, $invoice_object->getId()))
                     ->setIsCustomerNotified(true)
