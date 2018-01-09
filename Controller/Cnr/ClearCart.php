@@ -31,6 +31,7 @@ class ClearCart extends \Magento\Framework\App\Action\Action
      * @var \Magento\Customer\Model\Session
      */
     protected $customerSession;
+    protected $logger;
     /**
      * Constructor
      *
@@ -44,7 +45,8 @@ class ClearCart extends \Magento\Framework\App\Action\Action
         \Smile\Retailer\Api\RetailerRepositoryInterface $retailerRepository,
         \Magento\Framework\Json\Helper\Data $jsonHelper,
         \Cleargo\MultiCart\Helper\Data $cartHelper,
-        \Magento\Customer\Model\Session $customerSession
+        \Magento\Customer\Model\Session $customerSession,
+        \Psr\Log\LoggerInterface $logger
     ) {
         $this->storeManager=$storeManager;
         $this->retailerRepository=$retailerRepository;
@@ -52,6 +54,7 @@ class ClearCart extends \Magento\Framework\App\Action\Action
         $this->jsonHelper = $jsonHelper;
         $this->cartHelper=$cartHelper;
         $this->customerSession=$customerSession;
+        $this->logger=$logger;
         parent::__construct($context);
     }
 

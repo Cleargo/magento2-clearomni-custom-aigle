@@ -50,6 +50,7 @@ class Submit extends \Magento\Framework\App\Action\Action
      * @var \Magento\Sales\Model\Order\Email\Sender\InvoiceSender
      */
     protected $invoiceSender;
+    protected $logger;
     /**
      * Constructor
      *
@@ -68,7 +69,8 @@ class Submit extends \Magento\Framework\App\Action\Action
         \Magento\Sales\Model\OrderFactory $orderFactory,
         \Magento\Sales\Model\Service\InvoiceService $invoiceService,
         \Magento\Framework\DB\Transaction $transaction,
-        \Magento\Sales\Model\Order\Email\Sender\InvoiceSender $invoiceSender
+        \Magento\Sales\Model\Order\Email\Sender\InvoiceSender $invoiceSender,
+        \Psr\Log\LoggerInterface $logger
     )
     {
         $this->resultPageFactory = $resultPageFactory;
@@ -82,6 +84,7 @@ class Submit extends \Magento\Framework\App\Action\Action
         $this->invoiceService=$invoiceService;
         $this->transaction=$transaction;
         $this->invoiceSender=$invoiceSender;
+        $this->logger=$logger;
         parent::__construct($context);
     }
 

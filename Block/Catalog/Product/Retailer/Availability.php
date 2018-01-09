@@ -40,6 +40,7 @@ class Availability extends \Smile\RetailerOffer\Block\Catalog\Product\Retailer\A
     protected $imageHelper;
     protected $registry;
     protected $helper;
+    protected $clearomniHelper;
     public function __construct(
         Context $context,
         ProductRepositoryInterface $productRepository,
@@ -51,6 +52,7 @@ class Availability extends \Smile\RetailerOffer\Block\Catalog\Product\Retailer\A
         \Magento\Catalog\Helper\Image $imageHelper,
         \Magento\Framework\Registry $registry,
         \Cleargo\AigleClearomniConnector\Helper\Data $helper,
+        \Cleargo\Clearomni\Helper\Data $clearomniHelper,
         array $data = []
     ) {
 
@@ -58,6 +60,7 @@ class Availability extends \Smile\RetailerOffer\Block\Catalog\Product\Retailer\A
         $this->imageHelper=$imageHelper;
         $this->registry = $registry;
         $this->helper=$helper;
+        $this->clearomniHelper=$clearomniHelper;
         parent::__construct(
             $context,
             $productRepository,
@@ -74,6 +77,26 @@ class Availability extends \Smile\RetailerOffer\Block\Catalog\Product\Retailer\A
     {
         $result=parent::getJsLayout();
         $result=json_decode($result,true);
+        //get clearomni stock
+        $product=$this->registry->registry('product');
+        if($product) {
+            $response = $this->clearomniHelper->request('/get-store?order_type=cnr&store_view=1&skus[]=' . $product->getSku());
+            if($response['error']==false){
+                $productInventory = $response['data'][$product->getSku()]['children'];
+            }
+        }
+        //turn sku->warehouse  to warehouse->sku
+        $stock=[];
+        if(isset($productInventory)) {
+            foreach ($productInventory as $key => $value) {
+                foreach ($value['warehouses'] as $key2 => $value2) {
+                    if (!isset($stock[$value2['code']])) {
+                        $stock[$value2['code']] = [];
+                    }
+                    $stock[$value2['code']][$key] = $value2['actual'];
+                }
+            }
+        }
         foreach ($result['components']['catalog-product-retailer-availability']['storeOffers'] as $key=>$value){
             $seller=$this->retailerRepository->get($value['sellerId']);
             $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['id']=$result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['entity_id']=$seller->getId();
@@ -82,10 +105,26 @@ class Availability extends \Smile\RetailerOffer\Block\Catalog\Product\Retailer\A
             $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['tel']=$seller->getContactPhone();
             $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['address']=$seller->getExtensionAttributes()->getAddress()->getData();
             $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['openingHour']=$seller->getExtensionAttributes()->getOpeningHours();
-            $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['availability']=$result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['finalAvailability']=$this->helper->getProductAvailability($result['components']['catalog-product-retailer-availability']['productId']);
+            $availability=$this->helper->getProductAvailability($result['components']['catalog-product-retailer-availability']['productId'],$seller->getSellerCode());
+            if(!empty($availability)) {
+                $values=array_unique(array_values($availability));
+                if(sizeof($values)==1&&$values[0]<=0){
+                    $availability=\Cleargo\AigleClearomniConnector\Helper\Data::OOS;
+                }else{
+                    $availability=\Cleargo\AigleClearomniConnector\Helper\Data::AVAIL;
+                }
+            }else{
+                $availability=\Cleargo\AigleClearomniConnector\Helper\Data::OOS;
+            }
+            $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['availability']=$result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['finalAvailability']=$availability;
             $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['available']=$result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['availability']!=\Cleargo\AigleClearomniConnector\Helper\Data::OOS;
             $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['minDay']=$result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['finalMinDay']=mt_rand(1,3);
             $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['maxDay']=$result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['finalMaxDay']=mt_rand(4,6);
+            if(isset($stock[$seller->getSellerCode()])) {
+                $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['stock'] = $stock[$seller->getSellerCode()];
+            }else{
+                $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['stock']=[];
+            }
         }
 
         return json_encode($result);
