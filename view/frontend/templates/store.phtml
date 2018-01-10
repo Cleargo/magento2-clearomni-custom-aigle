@@ -7,6 +7,7 @@ $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
 $helper = $block->getHelper();
 if ($block->currentProduct()) {
     $availability = $objectManager->create('Cleargo\AigleClearomniConnector\Block\Catalog\Product\Retailer\Availability');
+    $availability->setRequestType('cnc');
     $jsConfig = $availability->getJsLayout();
     $storeAvail = json_decode($jsConfig, true);
     $storeAvail = $storeAvail['components']['catalog-product-retailer-availability']['storeOffers'];
@@ -57,10 +58,8 @@ if ($block->currentProduct()) {
             $(document).ready(function () {
                 //loop to wait until all knockjs is rendered....
                 var interval=setInterval(function(){
-                    console.log('waiting');
                     if($('.super-attribute-select').size()>0){
                         $('.super-attribute-select').change(function () {
-                            console.log('change');
                             $('body').trigger('processStart');
                             $.ajax({
                                 'url': '/cnr/cnr/getskubyrequest',
@@ -94,7 +93,6 @@ if ($block->currentProduct()) {
                                 });
                             });
                         });
-                        console.log('stopped');
                         clearInterval(interval);
                     }
                 },1000);
@@ -111,3 +109,14 @@ if ($block->currentProduct()) {
         });
     });
 </script>
+<?php if($block->isCheckout()):?>
+    <script type="text/javascript">
+        require(['jquery'],function($){
+            $(document).ready(function(){
+                if($('.store-selector option[disabled]').size()==$('.store-selector option').size()){//disable checkout button if no store is available
+                    $('[data-role="proceed-to-checkout"]').prop('disabled',true);
+                }
+            })
+        })
+    </script>
+<?php endif; ?>

@@ -42,6 +42,7 @@ class Availability extends \Smile\RetailerOffer\Block\Catalog\Product\Retailer\A
     protected $helper;
     protected $clearomniHelper;
     protected $deliveryHelper;
+    protected $requestType;
     public function __construct(
         Context $context,
         ProductRepositoryInterface $productRepository,
@@ -64,6 +65,7 @@ class Availability extends \Smile\RetailerOffer\Block\Catalog\Product\Retailer\A
         $this->helper=$helper;
         $this->clearomniHelper=$clearomniHelper;
         $this->deliveryHelper=$deliveryHelper;
+        $this->requestType='cnr';
         parent::__construct(
             $context,
             $productRepository,
@@ -78,12 +80,14 @@ class Availability extends \Smile\RetailerOffer\Block\Catalog\Product\Retailer\A
 
     public function getJsLayout()
     {
+//        var_dump($type);
+//        exit;
         $result=parent::getJsLayout();
         $result=json_decode($result,true);
         //get clearomni stock
         $product=$this->registry->registry('product');
         if($product) {
-            $response = $this->clearomniHelper->request('/get-store?order_type=cnr&store_view=1&skus[]=' . $product->getSku());
+            $response = $this->clearomniHelper->request('/get-store?order_type='.$this->requestType.'&store_view=1&skus[]=' . $product->getSku());
             if($response['error']==false){
                 $productInventory = $response['data'][$product->getSku()]['children'];
             }
@@ -108,7 +112,7 @@ class Availability extends \Smile\RetailerOffer\Block\Catalog\Product\Retailer\A
             $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['tel']=$seller->getContactPhone();
             $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['address']=$seller->getExtensionAttributes()->getAddress()->getData();
             $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['openingHour']=$seller->getExtensionAttributes()->getOpeningHours();
-            $availability=$this->helper->getProductAvailability($result['components']['catalog-product-retailer-availability']['productId'],$seller->getSellerCode());
+            $availability=$this->helper->getProductAvailability($result['components']['catalog-product-retailer-availability']['productId'],$seller->getSellerCode(),false,$this->requestType);
             if(!empty($availability)) {
                 $values=array_unique(array_values($availability));
                 if(sizeof($values)==1&&$values[0]<=0){
@@ -149,4 +153,21 @@ class Availability extends \Smile\RetailerOffer\Block\Catalog\Product\Retailer\A
         $this->setModuleName($this->extractModuleName('Smile\RetailerOffer\Block\Catalog\Product\Retailer\Availability'));
         return parent::_toHtml();
     }
+
+    /**
+     * @return string
+     */
+    public function getRequestType()
+    {
+        return $this->requestType;
+    }
+
+    /**
+     * @param string $type
+     */
+    public function setRequestType($type)
+    {
+        $this->requestType = $type;
+    }
+
 }

@@ -14,18 +14,20 @@
     <referenceBlock name="product.info.addtocart">
         <block class="Cleargo\AigleClearomniConnector\Block\Store" name="store.selector.simple" template="Cleargo_AigleClearomniConnector::store.phtml">
             <arguments>
-                <argument name="includejs" xsi:type="boolean">false</argument>
+                <argument name="includejs" xsi:type="boolean">true</argument>
                 <argument name="currentProduct" xsi:type="boolean">true</argument>
                 <argument name="updateDropdown" xsi:type="boolean">true</argument>
+                <argument name="isCheckout" xsi:type="boolean">false</argument>
             </arguments>
         </block>
     </referenceBlock>
     <referenceBlock name="product.info.addtocart.additional">
         <block class="Cleargo\AigleClearomniConnector\Block\Store" name="store.selector.config" template="Cleargo_AigleClearomniConnector::store.phtml">
             <arguments>
-                <argument name="includejs" xsi:type="boolean">false</argument>
+                <argument name="includejs" xsi:type="boolean">true</argument>
                 <argument name="currentProduct" xsi:type="boolean">true</argument>
                 <argument name="updateDropdown" xsi:type="boolean">true</argument>
+                <argument name="isCheckout" xsi:type="boolean">false</argument>
             </arguments>
         </block>
     </referenceBlock>

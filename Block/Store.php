@@ -118,6 +118,9 @@ class Store extends \Magento\Framework\View\Element\Template
     public function currentProduct(){
         return $this->_data['currentProduct'];
     }
+    public function isCheckout(){
+        return $this->_data['isCheckout'];
+    }
 
     /**
      * @return \Magento\Customer\Model\Session
