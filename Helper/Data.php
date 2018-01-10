@@ -207,7 +207,7 @@ class Data extends AbstractHelper
         return $retailerCollection;
     }
 
-    public function getProductAvailability($productId, $storeCode = false, $sku = false)
+    public function getProductAvailability($productId, $storeCode = false, $sku = false,$type='cnr')
     {
         if ($sku == true) {
             $product = $this->productRepository->get($productId);
@@ -215,7 +215,7 @@ class Data extends AbstractHelper
             $product = $this->productRepository->getById($productId);
         }
         $productSku = $product->getSku();
-        $response = $this->clearomniHelper->request('/get-store?order_type=cnr&store_view=1&skus[]=' . $productSku);
+        $response = $this->clearomniHelper->request('/get-store?order_type='.$type.'&store_view=1&skus[]=' . $productSku);
         if ($response['error'] == false) {
             if ($product->getTypeId() == 'configurable') {
                 $productInventory = $response['data'][$productSku]['children'];
@@ -253,7 +253,7 @@ class Data extends AbstractHelper
 
     }
 
-    public function getProductAvailableInStore($productSku)
+    public function getProductAvailableInStore($productSku,$type='cnr')
     {
         if (empty($productSku)) {
             return [];
@@ -268,7 +268,7 @@ class Data extends AbstractHelper
             $data[$value->getId()]['minDay'] = [];
             $data[$value->getId()]['maxDay'] = [];
             foreach ($productSku as $key2 => $value2) {
-                $availability = $this->getProductAvailability($value2, $value['seller_code'], true);
+                $availability = $this->getProductAvailability($value2, $value['seller_code'], true,$type);
                 $minDay=0;
                 $maxDay=0;
                 if (empty($availability)) {
@@ -306,6 +306,6 @@ class Data extends AbstractHelper
                 $productSku[] = $value->getSku();
             }
         }
-        return $this->getProductAvailableInStore($productSku);
+        return $this->getProductAvailableInStore($productSku,'cnc');
     }
 }
