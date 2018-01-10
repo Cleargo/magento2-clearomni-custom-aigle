@@ -42,6 +42,8 @@ class Data extends AbstractHelper
     protected $retailerCollectionFactory;
     protected $productRepository;
     protected $clearomniHelper;
+    protected $deliveryHelper;
+
     /**
      * @param Magento\Framework\App\Helper\Context $context
      * @param Magento\Framework\ObjectManagerInterface $objectManager
@@ -63,7 +65,8 @@ class Data extends AbstractHelper
         \Smile\Retailer\Model\ResourceModel\Retailer\CollectionFactory $retailerCollectionFactory,
         \Magento\Customer\Model\Session $customerSession,
         \Magento\Catalog\Api\ProductRepositoryInterface $productRepository,
-        \Cleargo\Clearomni\Helper\Data $clearomniHelper
+        \Cleargo\Clearomni\Helper\Data $clearomniHelper,
+        \Cleargo\DeliveryMinMaxDay\Helper\Data $deliveryHelper
     )
     {
         $this->_objectManager = $objectManager;
@@ -77,8 +80,9 @@ class Data extends AbstractHelper
         $this->customerSession = $customerSession;
         $this->connection = $objectManager->get('Magento\Framework\App\ResourceConnection')->getConnection();
         $this->retailerCollectionFactory = $retailerCollectionFactory;
-        $this->productRepository=$productRepository;
-        $this->clearomniHelper=$clearomniHelper;
+        $this->productRepository = $productRepository;
+        $this->clearomniHelper = $clearomniHelper;
+        $this->deliveryHelper = $deliveryHelper;
         parent::__construct($context);
     }
 
@@ -203,36 +207,55 @@ class Data extends AbstractHelper
         return $retailerCollection;
     }
 
-    public function getProductAvailability($productId,$storeCode)
+    public function getProductAvailability($productId, $storeCode = false, $sku = false)
     {
-        $product=$this->productRepository->getById($productId);
-        $productSku=$product->getSku();
-        $response = $this->clearomniHelper->request('/get-store?order_type=cnr&store_view=1&skus[]=' . $productSku);
-        if($response['error']==false){
-            $productInventory = $response['data'][$productSku]['children'];
+        if ($sku == true) {
+            $product = $this->productRepository->get($productId);
+        } else {
+            $product = $this->productRepository->getById($productId);
         }
-    //turn sku->warehouse  to warehouse->sku
-        $stock=[];
-        if(isset($productInventory)) {
-            foreach ($productInventory as $key => $value) {
-                foreach ($value['warehouses'] as $key2 => $value2) {
+        $productSku = $product->getSku();
+        $response = $this->clearomniHelper->request('/get-store?order_type=cnr&store_view=1&skus[]=' . $productSku);
+        if ($response['error'] == false) {
+            if ($product->getTypeId() == 'configurable') {
+                $productInventory = $response['data'][$productSku]['children'];
+            } else {
+                $productInventory = $response['data'][$productSku];
+            }
+        }
+        //turn sku->warehouse  to warehouse->sku
+        $stock = [];
+        if ($product->getTypeId() == 'configurable') {
+            if (isset($productInventory)) {
+                foreach ($productInventory as $key => $value) {
+                    foreach ($value['warehouses'] as $key2 => $value2) {
+                        if (!isset($stock[$value2['code']])) {
+                            $stock[$value2['code']] = [];
+                        }
+                        $stock[$value2['code']][$key] = $value2['actual'];
+                    }
+                }
+            }
+        } else {
+            if (isset($productInventory)) {
+                foreach ($productInventory['warehouses'] as $key2 => $value2) {
                     if (!isset($stock[$value2['code']])) {
                         $stock[$value2['code']] = [];
                     }
-                    $stock[$value2['code']][$key] = $value2['actual'];
+                    $stock[$value2['code']] = $value2['actual'];
                 }
             }
         }
-        if(isset($stock[$storeCode])) {
+        if (isset($stock[$storeCode])) {
             return $stock[$storeCode];
         }
-            return [];
+        return [];
 
     }
 
     public function getProductAvailableInStore($productSku)
     {
-        if(empty($productSku)) {
+        if (empty($productSku)) {
             return [];
         }
         $store = $this->getStore();
@@ -245,17 +268,31 @@ class Data extends AbstractHelper
             $data[$value->getId()]['minDay'] = [];
             $data[$value->getId()]['maxDay'] = [];
             foreach ($productSku as $key2 => $value2) {
-                $data[$value->getId()]['availability'][$value2] = $this->getProductAvailability($value2);
+                $availability = $this->getProductAvailability($value2, $value['seller_code'], true);
+                $minDay=0;
+                $maxDay=0;
+                if (empty($availability)) {
+                    $availability = \Cleargo\AigleClearomniConnector\Helper\Data::OOS;
+                } else {
+                    $availability=$this->deliveryHelper->getStatus($availability);
+                    $minMaxDay=$this->deliveryHelper->getMinMaxDay($availability);
+                    $minDay=$minMaxDay['min'];
+                    $maxDay=$minMaxDay['max'];
+                }
+                $data[$value->getId()]['availability'][$value2] = $availability;
+//                var_dump($data[$value->getId()]['availability'][$value2],$value['seller_code']);
                 $data[$value->getId()]['finalAvailability'][] = $data[$value->getId()]['availability'][$value2];
-                $data[$value->getId()]['minDay'][$value2] = mt_rand(1, 3);
-                $data[$value->getId()]['maxDay'][$value2] = mt_rand(4, 6);
+                $data[$value->getId()]['minDay'][$value2] = $minDay;
+                $data[$value->getId()]['maxDay'][$value2] = $maxDay;
             }
+//            exit;
             $data[$value->getId()]['finalAvailability'] = array_intersect($this::AVAILABILITY, array_unique($data[$value->getId()]['finalAvailability']));
             reset($data[$value->getId()]['finalAvailability']);
             $data[$value->getId()]['finalAvailability'] = current($data[$value->getId()]['finalAvailability']);
-            $data[$value->getId()]['available']=$data[$value->getId()]['finalAvailability']!=\Cleargo\AigleClearomniConnector\Helper\Data::OOS;
+            $data[$value->getId()]['available'] = $data[$value->getId()]['finalAvailability'] != \Cleargo\AigleClearomniConnector\Helper\Data::OOS;
             $data[$value->getId()]['finalMinDay'] = max($data[$value->getId()]['minDay']);
             $data[$value->getId()]['finalMaxDay'] = max($data[$value->getId()]['maxDay']);
+            $data[$value->getId()]['code'] = $value['seller_code'];
         }
         return $data;
     }

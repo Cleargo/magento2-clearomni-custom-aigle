@@ -38,6 +38,8 @@ class Store extends \Magento\Framework\View\Element\Template
      * @var \Magento\Catalog\Helper\Image
      */
     protected $imageHelper;
+
+    protected $customerSession;
     /**
      * @param \Magento\Framework\View\Element\Template\Context $context
      * @param array $data
@@ -50,6 +52,7 @@ class Store extends \Magento\Framework\View\Element\Template
         \Smile\Retailer\Api\RetailerRepositoryInterface $retailerRepository,
         \Cleargo\AigleClearomniConnector\Helper\Data $helper,
         \Magento\Catalog\Helper\Image $imageHelper,
+        \Magento\Customer\Model\Session $customerSession,
         array $data = []
     ) {
         parent::__construct($context, $data);
@@ -58,6 +61,7 @@ class Store extends \Magento\Framework\View\Element\Template
         $this->retailerRepository=$retailerRepository;
         $this->helper=$helper;
         $this->imageHelper=$imageHelper;
+        $this->customerSession=$customerSession;
     }
 
     /**
@@ -107,9 +111,22 @@ class Store extends \Magento\Framework\View\Element\Template
     public function includeJs(){
         return $this->_data['includejs'];
     }
+
+    public function updateDropdown(){
+        return $this->_data['updateDropdown'];
+    }
     public function currentProduct(){
         return $this->_data['currentProduct'];
     }
+
+    /**
+     * @return \Magento\Customer\Model\Session
+     */
+    public function getCustomerSession()
+    {
+        return $this->customerSession;
+    }
+
 
 
 }

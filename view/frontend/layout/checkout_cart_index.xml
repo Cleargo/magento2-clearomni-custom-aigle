@@ -14,6 +14,7 @@
                 <arguments>
                     <argument name="includejs" xsi:type="boolean">true</argument>
                     <argument name="currentProduct" xsi:type="boolean">false</argument>
+                    <argument name="updateDropdown" xsi:type="boolean">false</argument>
                 </arguments>
             </block>
         </referenceContainer>

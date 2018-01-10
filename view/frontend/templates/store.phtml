@@ -3,45 +3,111 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-$objectManager=\Magento\Framework\App\ObjectManager::getInstance();
-$helper=$objectManager->get('Cleargo\AigleClearomniConnector\Helper\Data');
-if($block->currentProduct()){
-    $availability=$objectManager->create('Cleargo\AigleClearomniConnector\Block\Catalog\Product\Retailer\Availability');
-    $jsConfig=$availability->getJsLayout();
-    $storeAvail=json_decode($jsConfig,true);
-    $storeAvail=$storeAvail['components']['catalog-product-retailer-availability']['storeOffers'];
-}else {
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$helper = $block->getHelper();
+if ($block->currentProduct()) {
+    $availability = $objectManager->create('Cleargo\AigleClearomniConnector\Block\Catalog\Product\Retailer\Availability');
+    $jsConfig = $availability->getJsLayout();
+    $storeAvail = json_decode($jsConfig, true);
+    $storeAvail = $storeAvail['components']['catalog-product-retailer-availability']['storeOffers'];
+} else {
     $storeAvail = $helper->getCartAvailableInStore();
 }
 //exit;
 ?>
-<?php if(!empty($storeAvail)):?>
+<?php if (!empty($storeAvail)): ?>
     <select name="store" id="selectedStore" class="store-selector">
-        <?php foreach ($storeAvail as $key=>$value):?>
-            <option value="<?php echo $value['entity_id'];?>" data-availability="<?php echo $value['finalAvailability']?>" data-minday="<?php echo $value['finalMinDay']; ?>" data-maxday="<?php echo $value['finalMaxDay']; ?>" data-available="<?php echo $value['available']?'true':'false'; ?>"><?php echo $value['name'];?></option>
-        <?php endforeach;?>
+        <?php foreach ($storeAvail as $key => $value): ?>
+            <option value="<?php echo $value['entity_id']; ?>"
+                    data-availability="<?php echo $value['finalAvailability'] ?>"
+                    data-minday="<?php echo $value['finalMinDay']; ?>"
+                    data-maxday="<?php echo $value['finalMaxDay']; ?>"
+                    data-available="<?php echo $value['available'] ? 'true' : 'false'; ?>"
+                    data-storecode="<?php echo $value['code']; ?>"
+                <?php echo $value['available']==false?'disabled="disabled"':''; ?>><?php echo $value['name']; ?></option>
+        <?php endforeach; ?>
     </select>
 <?php endif; ?>
-<?php if($block->includeJs()):?>
+<?php if ($block->includeJs()): ?>
     <script type="text/javascript">
-        require(['jquery'],function($){
-            $(document).ready(function(){
-               $('.store-selector').change(function(){
-                   console.log('changed');
-                   var selected=$(this).find('option:selected');
-                   if(selected.data('available')=='true'||selected.data('available')==true){
-                       $('body').trigger('processStart');
+        require(['jquery'], function ($) {
+            $(document).ready(function () {
+                $('.store-selector').change(function () {
+                    console.log('changed');
+                    var selected = $(this).find('option:selected');
+                    if (selected.data('available') == 'true' || selected.data('available') == true) {
+                        $('body').trigger('processStart');
                         $.ajax({
-                            'url':'/cnr/store/set',
-                            'data':{
-                                'store':selected.val()
+                            'url': '/cnr/store/set',
+                            'data': {
+                                'store': selected.val()
                             }
-                        }).done(function(){
+                        }).done(function () {
                             $('body').trigger('processStop');
                         });
-                   }
-               });
+                    }
+                });
             });
         });
     </script>
 <?php endif; ?>
+<?php if ($block->updateDropdown()): ?>
+    <script type="text/javascript">
+        require(['jquery'], function ($) {
+            $(document).ready(function () {
+                //loop to wait until all knockjs is rendered....
+                var interval=setInterval(function(){
+                    console.log('waiting');
+                    if($('.super-attribute-select').size()>0){
+                        $('.super-attribute-select').change(function () {
+                            console.log('change');
+                            $('body').trigger('processStart');
+                            $.ajax({
+                                'url': '/cnr/cnr/getskubyrequest',
+                                'data': $('#product_addtocart_form').serialize() + '&sku=' + $('#product_addtocart_form').data('product-sku')
+                            }).done(function (message) {
+                                var sku = message.sku;
+                                $('body').trigger('processStop');
+                                $('.store-selector option').each(function () {
+                                    var storeCode = $(this).data('storecode');
+                                    var stock = message.inventory;
+                                    var shopItem = 0;
+                                    //get stock
+                                    stock.forEach(function (value) {
+                                        if (value['code'] == storeCode) {
+                                            shopItem = value;
+                                        }
+                                    })
+                                    if (shopItem == 0) {
+                                        $(this).data('available', false);
+                                        return;
+                                    }
+                                    $(this).data('availability', shopItem['status']);
+                                    $(this).data('minday', shopItem['minMax']['min']);
+                                    $(this).data('maxday', shopItem['minMax']['max']);
+                                    if (shopItem['actual'] > 0) {
+                                        $(this).data('available', true);
+                                    } else {
+                                        $(this).data('available', false);
+                                        // $(this).addClass('oosHide');
+                                    }
+                                });
+                            });
+                        });
+                        console.log('stopped');
+                        clearInterval(interval);
+                    }
+                },1000);
+                //configurable option changed
+            });
+        });
+    </script>
+<?php endif; ?>
+<script type="text/javascript">
+    //run change once anyway
+    require(['jquery'],function($){
+        $(document).ready(function () {
+            $('#selectedStore').change();
+        });
+    });
+</script>
