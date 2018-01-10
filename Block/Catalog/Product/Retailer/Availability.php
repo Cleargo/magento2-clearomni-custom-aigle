@@ -41,6 +41,7 @@ class Availability extends \Smile\RetailerOffer\Block\Catalog\Product\Retailer\A
     protected $registry;
     protected $helper;
     protected $clearomniHelper;
+    protected $deliveryHelper;
     public function __construct(
         Context $context,
         ProductRepositoryInterface $productRepository,
@@ -53,6 +54,7 @@ class Availability extends \Smile\RetailerOffer\Block\Catalog\Product\Retailer\A
         \Magento\Framework\Registry $registry,
         \Cleargo\AigleClearomniConnector\Helper\Data $helper,
         \Cleargo\Clearomni\Helper\Data $clearomniHelper,
+        \Cleargo\DeliveryMinMaxDay\Helper\Data $deliveryHelper,
         array $data = []
     ) {
 
@@ -61,6 +63,7 @@ class Availability extends \Smile\RetailerOffer\Block\Catalog\Product\Retailer\A
         $this->registry = $registry;
         $this->helper=$helper;
         $this->clearomniHelper=$clearomniHelper;
+        $this->deliveryHelper=$deliveryHelper;
         parent::__construct(
             $context,
             $productRepository,
@@ -111,15 +114,16 @@ class Availability extends \Smile\RetailerOffer\Block\Catalog\Product\Retailer\A
                 if(sizeof($values)==1&&$values[0]<=0){
                     $availability=\Cleargo\AigleClearomniConnector\Helper\Data::OOS;
                 }else{
-                    $availability=\Cleargo\AigleClearomniConnector\Helper\Data::AVAIL;
+                    $availability=$this->deliveryHelper->getStatus(max($values));
                 }
             }else{
                 $availability=\Cleargo\AigleClearomniConnector\Helper\Data::OOS;
             }
             $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['availability']=$result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['finalAvailability']=$availability;
             $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['available']=$result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['availability']!=\Cleargo\AigleClearomniConnector\Helper\Data::OOS;
-            $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['minDay']=$result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['finalMinDay']=mt_rand(1,3);
-            $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['maxDay']=$result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['finalMaxDay']=mt_rand(4,6);
+            $minMaxDay=$this->deliveryHelper->getMinMaxDay($availability);
+            $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['minDay']=$result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['finalMinDay']=$minMaxDay['min'];
+            $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['maxDay']=$result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['finalMaxDay']=$minMaxDay['max'];
             if(isset($stock[$seller->getSellerCode()])) {
                 $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['stock'] = $stock[$seller->getSellerCode()];
             }else{

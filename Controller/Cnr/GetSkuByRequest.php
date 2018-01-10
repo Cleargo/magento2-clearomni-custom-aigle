@@ -119,7 +119,8 @@ class GetSkuByRequest extends \Magento\Framework\App\Action\Action
         \Magento\ConfigurableProduct\Model\Product\Type\Configurable $configurable,
         \Cleargo\Clearomni\Helper\Data $helper,
         \Psr\Log\LoggerInterface $logger,
-        \Magento\Framework\Json\Helper\Data $jsonHelper
+        \Magento\Framework\Json\Helper\Data $jsonHelper,
+        \Cleargo\DeliveryMinMaxDay\Helper\Data $deliveryHelper
     ) {
         $this->_eventManager = $eventManager;
         $this->_scopeConfig = $scopeConfig;
@@ -136,6 +137,7 @@ class GetSkuByRequest extends \Magento\Framework\App\Action\Action
         $this->helper=$helper;
         $this->logger=$logger;
         $this->jsonHelper = $jsonHelper;
+        $this->deliveryHelper=$deliveryHelper;
         parent::__construct($context);
     }
 
@@ -153,6 +155,14 @@ class GetSkuByRequest extends \Magento\Framework\App\Action\Action
         $request=$this->getRequest()->getParam('super_attribute');
         $childProduct =  $this->configurable->getProductByAttributes($request,$product);
         $result['sku']=$childProduct->getSku();
+        $response = $this->helper->request('/get-store?order_type=cnr&store_view=1&skus[]=' . $childProduct->getSku());
+        if($response['error']==false){
+            $result['inventory']=$response['data'][$childProduct->getSku()]['warehouses'];
+            foreach ($result['inventory'] as $key=>$value){
+                $result['inventory'][$key]['status']=$this->deliveryHelper->getStatus($value['actual']);
+                $result['inventory'][$key]['minMax']=$this->deliveryHelper->getMinMaxDay($result['inventory'][$key]['status']);
+            }
+        }
         try {
             return $this->jsonResponse($result);
         } catch (\Magento\Framework\Exception\LocalizedException $e) {

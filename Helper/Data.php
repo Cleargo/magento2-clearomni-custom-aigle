@@ -42,7 +42,6 @@ class Data extends AbstractHelper
     protected $retailerCollectionFactory;
     protected $productRepository;
     protected $clearomniHelper;
-
     /**
      * @param Magento\Framework\App\Helper\Context $context
      * @param Magento\Framework\ObjectManagerInterface $objectManager
@@ -78,8 +77,8 @@ class Data extends AbstractHelper
         $this->customerSession = $customerSession;
         $this->connection = $objectManager->get('Magento\Framework\App\ResourceConnection')->getConnection();
         $this->retailerCollectionFactory = $retailerCollectionFactory;
-        $this->productRepository = $productRepository;
-        $this->clearomniHelper = $clearomniHelper;
+        $this->productRepository=$productRepository;
+        $this->clearomniHelper=$clearomniHelper;
         parent::__construct($context);
     }
 
@@ -204,17 +203,17 @@ class Data extends AbstractHelper
         return $retailerCollection;
     }
 
-    public function getProductAvailability($productId, $storeCode)
+    public function getProductAvailability($productId,$storeCode)
     {
-        $product = $this->productRepository->getById($productId);
-        $productSku = $product->getSku();
+        $product=$this->productRepository->getById($productId);
+        $productSku=$product->getSku();
         $response = $this->clearomniHelper->request('/get-store?order_type=cnr&store_view=1&skus[]=' . $productSku);
-        if ($response['error'] == false) {
+        if($response['error']==false){
             $productInventory = $response['data'][$productSku]['children'];
         }
-        //turn sku->warehouse  to warehouse->sku
-        $stock = [];
-        if (isset($productInventory)) {
+    //turn sku->warehouse  to warehouse->sku
+        $stock=[];
+        if(isset($productInventory)) {
             foreach ($productInventory as $key => $value) {
                 foreach ($value['warehouses'] as $key2 => $value2) {
                     if (!isset($stock[$value2['code']])) {
@@ -224,16 +223,16 @@ class Data extends AbstractHelper
                 }
             }
         }
-        if (isset($stock[$storeCode])) {
+        if(isset($stock[$storeCode])) {
             return $stock[$storeCode];
         }
-        return [];
+            return [];
 
     }
 
     public function getProductAvailableInStore($productSku)
     {
-        if (empty($productSku)) {
+        if(empty($productSku)) {
             return [];
         }
         $store = $this->getStore();
@@ -254,7 +253,7 @@ class Data extends AbstractHelper
             $data[$value->getId()]['finalAvailability'] = array_intersect($this::AVAILABILITY, array_unique($data[$value->getId()]['finalAvailability']));
             reset($data[$value->getId()]['finalAvailability']);
             $data[$value->getId()]['finalAvailability'] = current($data[$value->getId()]['finalAvailability']);
-            $data[$value->getId()]['available'] = $data[$value->getId()]['finalAvailability'] != \Cleargo\AigleClearomniConnector\Helper\Data::OOS;
+            $data[$value->getId()]['available']=$data[$value->getId()]['finalAvailability']!=\Cleargo\AigleClearomniConnector\Helper\Data::OOS;
             $data[$value->getId()]['finalMinDay'] = max($data[$value->getId()]['minDay']);
             $data[$value->getId()]['finalMaxDay'] = max($data[$value->getId()]['maxDay']);
         }
