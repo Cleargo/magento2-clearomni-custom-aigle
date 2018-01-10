@@ -54,7 +54,7 @@ class Availability extends \Smile\RetailerOffer\Block\Catalog\Product\Retailer\A
         \Magento\Catalog\Helper\Image $imageHelper,
         \Magento\Framework\Registry $registry,
         \Cleargo\AigleClearomniConnector\Helper\Data $helper,
-        \Cleargo\Clearomni\Helper\Data $clearomniHelper,
+        \Cleargo\Clearomni\Helper\Request $clearomniHelper,
         \Cleargo\DeliveryMinMaxDay\Helper\Data $deliveryHelper,
         array $data = []
     ) {

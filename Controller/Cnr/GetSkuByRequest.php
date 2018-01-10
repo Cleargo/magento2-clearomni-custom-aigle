@@ -89,7 +89,7 @@ class GetSkuByRequest extends \Magento\Framework\App\Action\Action
     protected $configurable;
 
     /**
-     * @var \Cleargo\Clearomni\Helper\Data
+     * @var \Cleargo\Clearomni\Helper\Request
      */
     protected $helper;
     protected $logger;
@@ -117,7 +117,7 @@ class GetSkuByRequest extends \Magento\Framework\App\Action\Action
         \Magento\Quote\Api\CartRepositoryInterface $quoteRepository,
         \Magento\Catalog\Api\ProductRepositoryInterface $productRepository,
         \Magento\ConfigurableProduct\Model\Product\Type\Configurable $configurable,
-        \Cleargo\Clearomni\Helper\Data $helper,
+        \Cleargo\Clearomni\Helper\Request $helper,
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\Json\Helper\Data $jsonHelper,
         \Cleargo\DeliveryMinMaxDay\Helper\Data $deliveryHelper
