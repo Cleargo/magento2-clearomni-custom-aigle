@@ -133,11 +133,16 @@ class Submit extends \Magento\Framework\App\Action\Action
             "shipping_method_code"=> "smilestoredelivery",
             "shipping_carrier_code"=> "smilestoredelivery"
         ];
+
         $data = $this->cartHelper->placeOrder($payload);
         $result = [
             'result' => 'true',
             'data' => $data
         ];
+        if(isset($data['result'])&&$data['result']=='false'){
+            $result['result']='false';
+            return $this->jsonResponse($result);
+        }
         //create invoice
         $orderId=$data;
         $order=$this->orderFactory->create()->load($orderId);
