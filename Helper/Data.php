@@ -146,10 +146,23 @@ class Data extends AbstractHelper implements \Cleargo\Clearomni\Helper\Clearomni
         foreach ($temp as $key => $value) {
             $group = $this->getGrouped($value);
             foreach ($group as $key2 => $value2) {
+                $reserveKey='';
                 if (sizeof($group) == 1 || !is_array($value2)) {
-                    $reserveKey = __($week[$value2])->getText();
+                    if(isset($week[$value2])) {
+                        $reserveKey = __($week[$value2])->getText();
+                    }else{
+                        continue;
+                    }
                 } else {
-                    $reserveKey = __($week[$value2[0]]) . ' - ' . __($week[$value2[sizeof($value2) - 1]]);
+                    try {
+                        if (is_array($value2)&& isset($week[$value2[0]])) {
+                            $reserveKey = __($week[$value2[0]]) . ' - ' . __($week[$value2[sizeof($value2) - 1]]);
+                        } else {
+                            continue;
+                        }
+                    }catch(\Exception $e){
+                        var_dump($week,$value2);
+                    }
                 }
                 $result[$reserveKey] = $key;
             }
