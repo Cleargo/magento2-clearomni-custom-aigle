@@ -136,6 +136,7 @@ class Data extends AbstractHelper implements \Cleargo\Clearomni\Helper\Clearomni
         foreach ($openingHours as $key => $value) {
             foreach ($value as $key2 => $value2) {
                 $converted = $this->convert12hrTo24hr($value2['start_time']) . '-' . $this->convert12hrTo24hr($value2['end_time']);
+//                var_dump($converted);
                 if (!isset($temp[$converted])) {
                     $temp[$converted] = [];
                 }
@@ -148,10 +149,15 @@ class Data extends AbstractHelper implements \Cleargo\Clearomni\Helper\Clearomni
             foreach ($group as $key2 => $value2) {
                 $reserveKey='';
                 if (sizeof($group) == 1 || !is_array($value2)) {
-                    if(isset($week[$value2])) {
-                        $reserveKey = __($week[$value2])->getText();
-                    }else{
-                        continue;
+                    try {
+                        if (isset($week[$value2])) {
+                            $reserveKey = __($week[$value2])->getText();
+                        } else {
+                            continue;
+                        }
+                    }catch (\Exception $e){
+//                        var_dump($openingHours,$group,$value2);
+//                        exit;
                     }
                 } else {
                     try {
@@ -161,7 +167,7 @@ class Data extends AbstractHelper implements \Cleargo\Clearomni\Helper\Clearomni
                             continue;
                         }
                     }catch(\Exception $e){
-                        var_dump($week,$value2);
+//                        var_dump($week,$value2);
                     }
                 }
                 $result[$reserveKey] = $key;
@@ -172,8 +178,18 @@ class Data extends AbstractHelper implements \Cleargo\Clearomni\Helper\Clearomni
 
     public function convert12hrTo24hr($value)
     {
+        // handle chinese locale time format
+        if(strpos($value,'上午')!==false){
+            $value=str_replace('上午','',$value);
+            $value=$value.' AM';
+        }
+        if(strpos($value,'下午')!==false){
+            $value=str_replace('下午','',$value);
+            $value=$value.' PM';
+        }
         return date("H:i", strtotime("$value"));
     }
+
 
     public function getGrouped($arr)
     {
