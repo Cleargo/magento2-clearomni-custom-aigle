@@ -84,7 +84,7 @@ if ($block->currentProduct()) {
                                     $(this).data('availability', shopItem['status']);
                                     $(this).data('minday', shopItem['minMax']['min']);
                                     $(this).data('maxday', shopItem['minMax']['max']);
-                                    if (shopItem['actual'] > 0) {
+                                    if (shopItem['net'] > 0) {
                                         $(this).data('available', true);
                                     } else {
                                         $(this).data('available', false);

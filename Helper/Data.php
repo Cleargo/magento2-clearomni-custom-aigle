@@ -229,14 +229,14 @@ class Data extends AbstractHelper implements \Cleargo\Clearomni\Helper\Clearomni
         }
         $productSku = $product->getSku();
         $response = $this->clearomniHelper->request('/get-store?order_type='.$type.'&store_view=1&skus[]=' . $productSku);
-//        if($type=='cnc'){//testing data
-//            if ($product->getTypeId() == 'configurable') {
+        if($type=='cnc'){//testing data
+            if ($product->getTypeId() == 'configurable') {
 //                $response = json_decode('{"error":false,"data":{"G9768":{"available":0,"warehouses":[{"id":1,"code":"ACP","actual":0,"net":0},{"id":2,"code":"AFW","actual":0,"net":0},{"id":3,"code":"AKT","actual":0,"net":0},{"id":4,"code":"ANP","actual":0,"net":0},{"id":5,"code":"ATS","actual":0,"net":0},{"id":9,"code":"AET","actual":0,"net":0},{"id":10,"code":"AIFC","actual":0,"net":0},{"id":11,"code":"AMM","actual":0,"net":0},{"id":12,"code":"AOT","actual":0,"net":0},{"id":13,"code":"AVC","actual":0,"net":0},{"id":14,"code":"APC","actual":0,"net":0},{"id":15,"code":"ASG","actual":0,"net":0},{"id":16,"code":"AST","actual":0,"net":0},{"id":17,"code":"AYM","actual":0,"net":0},{"id":18,"code":"AFM","actual":0,"net":0},{"id":19,"code":"ATO","actual":0,"net":0}],"children":{"G9768-36":{"available":1003,"warehouses":[{"id":1,"code":"ACP","actual":0,"net":0},{"id":2,"code":"AFW","actual":0,"net":0},{"id":3,"code":"AKT","actual":0,"net":0},{"id":4,"code":"ANP","actual":0,"net":0},{"id":5,"code":"ATS","actual":0,"net":0},{"id":9,"code":"AET","actual":0,"net":0},{"id":10,"code":"AIFC","actual":0,"net":0},{"id":11,"code":"AMM","actual":0,"net":0},{"id":12,"code":"AOT","actual":0,"net":0},{"id":13,"code":"AVC","actual":0,"net":0},{"id":14,"code":"APC","actual":0,"net":0},{"id":15,"code":"ASG","actual":0,"net":0},{"id":16,"code":"AST","actual":0,"net":0},{"id":17,"code":"AYM","actual":0,"net":0},{"id":18,"code":"AFM","actual":0,"net":0},{"id":19,"code":"ATO","actual":1003,"net":1003}]},"G9768-34":{"available":1004,"warehouses":[{"id":1,"code":"ACP","actual":0,"net":0},{"id":2,"code":"AFW","actual":0,"net":0},{"id":3,"code":"AKT","actual":0,"net":0},{"id":4,"code":"ANP","actual":0,"net":0},{"id":5,"code":"ATS","actual":0,"net":0},{"id":9,"code":"AET","actual":0,"net":0},{"id":10,"code":"AIFC","actual":0,"net":0},{"id":11,"code":"AMM","actual":0,"net":0},{"id":12,"code":"AOT","actual":0,"net":0},{"id":13,"code":"AVC","actual":0,"net":0},{"id":14,"code":"APC","actual":0,"net":0},{"id":15,"code":"ASG","actual":0,"net":0},{"id":16,"code":"AST","actual":0,"net":0},{"id":17,"code":"AYM","actual":0,"net":0},{"id":18,"code":"AFM","actual":0,"net":0},{"id":19,"code":"ATO","actual":1004,"net":1004}]},"G9768-38":{"available":1002,"warehouses":[{"id":1,"code":"ACP","actual":0,"net":0},{"id":2,"code":"AFW","actual":0,"net":0},{"id":3,"code":"AKT","actual":0,"net":0},{"id":4,"code":"ANP","actual":0,"net":0},{"id":5,"code":"ATS","actual":0,"net":0},{"id":9,"code":"AET","actual":0,"net":0},{"id":10,"code":"AIFC","actual":0,"net":0},{"id":11,"code":"AMM","actual":0,"net":0},{"id":12,"code":"AOT","actual":0,"net":0},{"id":13,"code":"AVC","actual":0,"net":0},{"id":14,"code":"APC","actual":0,"net":0},{"id":15,"code":"ASG","actual":0,"net":0},{"id":16,"code":"AST","actual":0,"net":0},{"id":17,"code":"AYM","actual":0,"net":0},{"id":18,"code":"AFM","actual":0,"net":0},{"id":19,"code":"ATO","actual":1002,"net":1002}]},"G9768-40":{"available":999,"warehouses":[{"id":1,"code":"ACP","actual":0,"net":0},{"id":2,"code":"AFW","actual":0,"net":0},{"id":3,"code":"AKT","actual":0,"net":0},{"id":4,"code":"ANP","actual":0,"net":0},{"id":5,"code":"ATS","actual":0,"net":0},{"id":9,"code":"AET","actual":0,"net":0},{"id":10,"code":"AIFC","actual":0,"net":0},{"id":11,"code":"AMM","actual":0,"net":0},{"id":12,"code":"AOT","actual":0,"net":0},{"id":13,"code":"AVC","actual":0,"net":0},{"id":14,"code":"APC","actual":0,"net":0},{"id":15,"code":"ASG","actual":0,"net":0},{"id":16,"code":"AST","actual":0,"net":0},{"id":17,"code":"AYM","actual":0,"net":0},{"id":18,"code":"AFM","actual":0,"net":0},{"id":19,"code":"ATO","actual":999,"net":999}]},"G9768-42":{"available":1000,"warehouses":[{"id":1,"code":"ACP","actual":0,"net":0},{"id":2,"code":"AFW","actual":0,"net":0},{"id":3,"code":"AKT","actual":0,"net":0},{"id":4,"code":"ANP","actual":0,"net":0},{"id":5,"code":"ATS","actual":0,"net":0},{"id":9,"code":"AET","actual":0,"net":0},{"id":10,"code":"AIFC","actual":0,"net":0},{"id":11,"code":"AMM","actual":0,"net":0},{"id":12,"code":"AOT","actual":0,"net":0},{"id":13,"code":"AVC","actual":0,"net":0},{"id":14,"code":"APC","actual":0,"net":0},{"id":15,"code":"ASG","actual":0,"net":0},{"id":16,"code":"AST","actual":0,"net":0},{"id":17,"code":"AYM","actual":0,"net":0},{"id":18,"code":"AFM","actual":0,"net":0},{"id":19,"code":"ATO","actual":1000,"net":1000}]},"G9768-44":{"available":1001,"warehouses":[{"id":1,"code":"ACP","actual":0,"net":0},{"id":2,"code":"AFW","actual":0,"net":0},{"id":3,"code":"AKT","actual":0,"net":0},{"id":4,"code":"ANP","actual":0,"net":0},{"id":5,"code":"ATS","actual":0,"net":0},{"id":9,"code":"AET","actual":0,"net":0},{"id":10,"code":"AIFC","actual":0,"net":0},{"id":11,"code":"AMM","actual":0,"net":0},{"id":12,"code":"AOT","actual":0,"net":0},{"id":13,"code":"AVC","actual":0,"net":0},{"id":14,"code":"APC","actual":0,"net":0},{"id":15,"code":"ASG","actual":0,"net":0},{"id":16,"code":"AST","actual":0,"net":0},{"id":17,"code":"AYM","actual":0,"net":0},{"id":18,"code":"AFM","actual":0,"net":0},{"id":19,"code":"ATO","actual":1001,"net":1001}]}}}}}', true);
-//            }else {
-////                $response = json_decode('{"error":false,"data":{"G9768-36":{"available":0,"warehouses":[{"id":1,"code":"ACP","actual":0,"net":0},{"id":2,"code":"AFW","actual":0,"net":0},{"id":3,"code":"AKT","actual":0,"net":0},{"id":4,"code":"ANP","actual":0,"net":0},{"id":5,"code":"ATS","actual":0,"net":0},{"id":9,"code":"AET","actual":0,"net":0},{"id":10,"code":"AIFC","actual":0,"net":0},{"id":11,"code":"AMM","actual":0,"net":0},{"id":12,"code":"AOT","actual":0,"net":0},{"id":13,"code":"AVC","actual":0,"net":0},{"id":14,"code":"APC","actual":0,"net":0},{"id":15,"code":"ASG","actual":0,"net":0},{"id":16,"code":"AST","actual":0,"net":0},{"id":17,"code":"AYM","actual":0,"net":0},{"id":18,"code":"AFM","actual":0,"net":0},{"id":19,"code":"ATO","actual":0,"net":0}]}}}', true);//outof stock
-//                $response = json_decode('{"error":false,"data":{"G9768-36":{"available":1003,"warehouses":[{"id":1,"code":"ACP","actual":0,"net":0},{"id":2,"code":"AFW","actual":0,"net":0},{"id":3,"code":"AKT","actual":0,"net":0},{"id":4,"code":"ANP","actual":0,"net":0},{"id":5,"code":"ATS","actual":0,"net":0},{"id":9,"code":"AET","actual":0,"net":0},{"id":10,"code":"AIFC","actual":0,"net":0},{"id":11,"code":"AMM","actual":0,"net":0},{"id":12,"code":"AOT","actual":0,"net":0},{"id":13,"code":"AVC","actual":0,"net":0},{"id":14,"code":"APC","actual":0,"net":0},{"id":15,"code":"ASG","actual":0,"net":0},{"id":16,"code":"AST","actual":0,"net":0},{"id":17,"code":"AYM","actual":0,"net":0},{"id":18,"code":"AFM","actual":0,"net":0},{"id":19,"code":"ATO","actual":1003,"net":1003}]}}}', true);//instock
-//            }
-//        }
+            }else {
+//                $response = json_decode('{"error":false,"data":{"G9768-36":{"available":0,"warehouses":[{"id":1,"code":"ACP","actual":0,"net":0},{"id":2,"code":"AFW","actual":0,"net":0},{"id":3,"code":"AKT","actual":0,"net":0},{"id":4,"code":"ANP","actual":0,"net":0},{"id":5,"code":"ATS","actual":0,"net":0},{"id":9,"code":"AET","actual":0,"net":0},{"id":10,"code":"AIFC","actual":0,"net":0},{"id":11,"code":"AMM","actual":0,"net":0},{"id":12,"code":"AOT","actual":0,"net":0},{"id":13,"code":"AVC","actual":0,"net":0},{"id":14,"code":"APC","actual":0,"net":0},{"id":15,"code":"ASG","actual":0,"net":0},{"id":16,"code":"AST","actual":0,"net":0},{"id":17,"code":"AYM","actual":0,"net":0},{"id":18,"code":"AFM","actual":0,"net":0},{"id":19,"code":"ATO","actual":0,"net":0}]}}}', true);//outof stock
+//                $response = json_decode('{"error":false,"data":{"G9768-44":{"available":1003,"warehouses":[{"id":1,"code":"ACP","actual":0,"net":0},{"id":2,"code":"AFW","actual":0,"net":0},{"id":3,"code":"AKT","actual":0,"net":0},{"id":4,"code":"ANP","actual":0,"net":0},{"id":5,"code":"ATS","actual":0,"net":0},{"id":9,"code":"AET","actual":0,"net":0},{"id":10,"code":"AIFC","actual":0,"net":0},{"id":11,"code":"AMM","actual":0,"net":0},{"id":12,"code":"AOT","actual":0,"net":0},{"id":13,"code":"AVC","actual":0,"net":0},{"id":14,"code":"APC","actual":0,"net":0},{"id":15,"code":"ASG","actual":0,"net":0},{"id":16,"code":"AST","actual":0,"net":0},{"id":17,"code":"AYM","actual":0,"net":0},{"id":18,"code":"AFM","actual":0,"net":0},{"id":19,"code":"ATO","actual":0,"net":1000}]}}}', true);//instock
+            }
+        }
         if ($response['error'] == false) {
             if ($product->getTypeId() == 'configurable') {
                 $productInventory = $response['data'][$productSku]['children'];
@@ -253,7 +253,8 @@ class Data extends AbstractHelper implements \Cleargo\Clearomni\Helper\Clearomni
                         if (!isset($stock[$value2['code']])) {
                             $stock[$value2['code']] = [];
                         }
-                        $stock[$value2['code']][$key] = $value2['actual'];
+                        $stock[$value2['code']][$key]['net'] = $value2['net'];
+                        $stock[$value2['code']][$key]['actual'] = $value2['actual'];
                     }
                 }
             }
@@ -261,9 +262,10 @@ class Data extends AbstractHelper implements \Cleargo\Clearomni\Helper\Clearomni
             if (isset($productInventory)) {
                 foreach ($productInventory['warehouses'] as $key2 => $value2) {
                     if (!isset($stock[$value2['code']])) {
-                        $stock[$value2['code']] = [];
+                        $stock[$value2['code']] = ['net'=>'','actual'=>''];
                     }
-                    $stock[$value2['code']] = $value2['actual'];
+                    $stock[$value2['code']]['net'] = $value2['net'];
+                    $stock[$value2['code']]['actual'] = $value2['actual'];
                 }
             }
         }
@@ -292,10 +294,10 @@ class Data extends AbstractHelper implements \Cleargo\Clearomni\Helper\Clearomni
                 $availability = $this->getProductAvailability($value2, $value['seller_code'], true,$type);
                 $minDay=0;
                 $maxDay=0;
-                if (empty($availability)) {
+                if (empty($availability['actual'])&&empty($availability['net'])) {//both empty = out of stock
                     $availability = \Cleargo\AigleClearomniConnector\Helper\Data::OOS;
                 } else {
-                    $availability=$this->deliveryHelper->getStatus($availability);
+                    $availability=$this->deliveryHelper->getStatus($availability['net'],$availability['actual']);
                     $minMaxDay=$this->deliveryHelper->getMinMaxDay($availability);
                     $minDay=$minMaxDay['min'];
                     $maxDay=$minMaxDay['max'];
@@ -328,5 +330,19 @@ class Data extends AbstractHelper implements \Cleargo\Clearomni\Helper\Clearomni
             }
         }
         return $this->getProductAvailableInStore($productSku,$type);
+    }
+
+    public function getNetActual($available){
+        $stock=['net'=>[0],'actual'=>[0]];
+        $temp=array_values($available);
+        foreach ($temp as $key=>$value){
+            $stock['net'][]=$value['net'];
+            $stock['actual'][]=$value['actual'];
+        }
+        $stock['net']=max($stock['net']);
+        $stock['actual']=max($stock['actual']);
+//        $stock['net']=100;
+//        $stock['actual']=0;
+        return $stock;
     }
 }
