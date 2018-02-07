@@ -129,6 +129,7 @@ class Availability extends \Smile\RetailerOffer\Block\Catalog\Product\Retailer\A
             $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['name']=$seller->getName();
             $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['tel']=$seller->getContactPhone();
             $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['address']=$seller->getExtensionAttributes()->getAddress()->getData();
+            $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['cleargoOpeningHour']=$seller->getCleargoOpeningHour();
             $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['openingHour']=$seller->getExtensionAttributes()->getOpeningHours();
             $availability=$this->helper->getProductAvailability($result['components']['catalog-product-retailer-availability']['productId'],$seller->getSellerCode(),false,$this->requestType);
             if(!empty($availability)) {
