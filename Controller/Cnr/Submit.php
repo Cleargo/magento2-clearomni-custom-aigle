@@ -119,7 +119,7 @@ class Submit extends \Magento\Framework\App\Action\Action
                 "region"=> $address['region'],
                 "region_id"=> $address['region_id'],
                 "country_id"=> $address['country_id'],
-                "street"=> $address['street'],
+                "street"=> is_array($address['street'])?$address['street']:[$address['street']],
                 "company"=> $retailer->getName(),
                 "postcode"=> $address['postcode'],
                 "city"=> $address['city'],
@@ -139,12 +139,13 @@ class Submit extends \Magento\Framework\App\Action\Action
             'result' => 'true',
             'data' => $data
         ];
-        if(isset($data['result'])&&$data['result']=='false'){
+        if((isset($data['result'])&&$data['result']=='false')||$data==false){
             $result['result']='false';
             return $this->jsonResponse($result);
         }
         //create invoice
         $orderId=$data;
+
         $order=$this->orderFactory->create()->load($orderId);
         if($order->getPayment()->getMethod()=='clickandreserve'){
             if($order->canInvoice()){

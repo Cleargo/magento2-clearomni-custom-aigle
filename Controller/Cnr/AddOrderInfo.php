@@ -70,15 +70,13 @@ class AddOrderInfo extends \Magento\Framework\App\Action\Action
         $retailer=$this->retailerRepository->get($params['store'],$this->storeManager->getDefaultStoreView()->getId());
         $address=$retailer->getExtensionAttributes()->getAddress()->getData();
         $customer=$this->customerSession->getCustomer();
-//        var_dump($customer->getData());
-//        exit;
         $payload=[
             'addressInformation'=>[
                 'shippingAddress'=>[
                     "region"=> $address['region'],
                     "region_id"=> $address['region_id'],
                     "country_id"=> $address['country_id'],
-                    "street"=> $address['street'],
+                    "street"=> is_array($address['street'])?$address['street']:[$address['street']],
                     "company"=> $retailer->getName(),
                     "postcode"=> $address['postcode'],
                     "city"=> $address['city'],
@@ -94,7 +92,7 @@ class AddOrderInfo extends \Magento\Framework\App\Action\Action
                     "region"=> $address['region'],
                     "region_id"=> $address['region_id'],
                     "country_id"=> $address['country_id'],
-                    "street"=> $address['street'],
+                    "street"=> is_array($address['street'])?$address['street']:[$address['street']],
                     "company"=> $retailer->getName(),
                     "postcode"=> $address['postcode'],
                     "city"=> $address['city'],
