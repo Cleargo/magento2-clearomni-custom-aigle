@@ -69,7 +69,15 @@ class AddOrderInfo extends \Magento\Framework\App\Action\Action
         $this->customerSession->setStore($params['store']);
         $retailer=$this->retailerRepository->get($params['store'],$this->storeManager->getDefaultStoreView()->getId());
         $address=$retailer->getExtensionAttributes()->getAddress()->getData();
+        $context = $this->_objectManager->get('Magento\Framework\App\Http\Context');
+//        $isLoggedIn = $context->getValue(\Magento\Customer\Model\Context::CONTEXT_AUTH);
+//        $customer=$this->cartHelper->getCurrentCustomer()->getCustomer();
         $customer=$this->customerSession->getCustomer();
+        if(!$customer->getFirstName()){
+            $repos=$this->cartHelper->getCustomerRepos();
+            $customer=$this->_objectManager->create('Magento\Customer\Model\Customer')->load($context->getValue(\Cleargo\AigleClearomniConnector\Model\Customer\Context::CONTEXT_CUSTOMER_ID));
+        }
+//        var_dump($this->customerSession->getCustomer()->getData());
         $payload=[
             'addressInformation'=>[
                 'shippingAddress'=>[

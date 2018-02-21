@@ -6,4 +6,7 @@
             <argument name="externalClearomniHelper" xsi:type="object">Cleargo\AigleClearomniConnector\Helper\Data</argument>
         </arguments>
     </type>
+    <type name="Magento\Framework\App\Action\AbstractAction">
+        <plugin name="dispatchController-context-plugin" type="Cleargo\AigleClearomniConnector\Plugin\App\Action\Context" sortOrder="15"/>
+    </type>
 </config>

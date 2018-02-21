@@ -39,6 +39,10 @@ class CnRPopUp extends \Magento\Framework\View\Element\Template
      */
     protected $imageHelper;
     /**
+     * @var \Magento\Customer\Api\CustomerRepositoryInterface
+     */
+    protected $customerRepos;
+    /**
      * @param \Magento\Framework\View\Element\Template\Context $context
      * @param array $data
      */
@@ -50,6 +54,7 @@ class CnRPopUp extends \Magento\Framework\View\Element\Template
         \Smile\Retailer\Api\RetailerRepositoryInterface $retailerRepository,
         \Cleargo\AigleClearomniConnector\Helper\Data $helper,
         \Magento\Catalog\Helper\Image $imageHelper,
+        \Magento\Customer\Api\CustomerRepositoryInterface $customerRepositoryInterface,
         array $data = []
     ) {
         parent::__construct($context, $data);
@@ -58,6 +63,7 @@ class CnRPopUp extends \Magento\Framework\View\Element\Template
         $this->retailerRepository=$retailerRepository;
         $this->helper=$helper;
         $this->imageHelper=$imageHelper;
+        $this->customerRepos=$customerRepositoryInterface;
     }
 
     /**
@@ -71,6 +77,15 @@ class CnRPopUp extends \Magento\Framework\View\Element\Template
     public function getHelper(){
         return $this->helper;
     }
+
+    /**
+     * @return \Magento\Customer\Api\CustomerRepositoryInterface
+     */
+    public function getCustomerRepos()
+    {
+        return $this->customerRepos;
+    }
+    
 
     /**
      * @return \Smile\Retailer\Api\RetailerRepositoryInterface

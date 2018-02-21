@@ -99,7 +99,12 @@ class Submit extends \Magento\Framework\App\Action\Action
         $params=$this->getRequest()->getParams();
         $retailer=$this->retailerRepository->get($this->customerSession->getStore(),$this->storeManager->getDefaultStoreView()->getId());
         $address=$retailer->getExtensionAttributes()->getAddress()->getData();
+        $context = $this->_objectManager->get('Magento\Framework\App\Http\Context');
         $customer=$this->customerSession->getCustomer();
+        if(!$customer->getFirstName()){
+            $repos=$this->cartHelper->getCustomerRepos();
+            $customer=$this->_objectManager->create('Magento\Customer\Model\Customer')->load($context->getValue(\Cleargo\AigleClearomniConnector\Model\Customer\Context::CONTEXT_CUSTOMER_ID));
+        }
         if($params['is_subscribe']=='true'||$params['is_subscribe']==true){
             $this->subscriberFactory->create()->subscribeCustomerById($customer->getId());
         }
