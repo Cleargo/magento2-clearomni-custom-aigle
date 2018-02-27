@@ -69,8 +69,8 @@ class LayoutProcessor implements \Magento\Checkout\Block\Checkout\LayoutProcesso
                 ['children']['shippingAddress']['children']['shipping-address-fieldset']['children']['fax']);
             unset($jsLayout['components']['checkout']['children']['steps']['children']['shipping-step']
                 ['children']['shippingAddress']['children']['shipping-address-fieldset']['children']['country_id']);
-            unset($jsLayout['components']['checkout']['children']['steps']['children']['shipping-step']
-                ['children']['shippingAddress']['children']['shipping-address-fieldset']['children']['telephone']);
+//            unset($jsLayout['components']['checkout']['children']['steps']['children']['shipping-step']
+//                ['children']['shippingAddress']['children']['shipping-address-fieldset']['children']['telephone']);
             unset($jsLayout['components']['checkout']['children']['steps']['children']['shipping-step']
                 ['children']['shippingAddress']['children']['shipping-address-fieldset']['children']['street']);
             unset($jsLayout['components']['checkout']['children']['steps']['children']['shipping-step']

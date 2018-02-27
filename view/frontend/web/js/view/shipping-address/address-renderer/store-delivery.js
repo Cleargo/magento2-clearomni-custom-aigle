@@ -42,7 +42,7 @@ define([
                 address.region=window.checkoutConfig.currentStoreDetail.address.region;
                 address.regionId=window.checkoutConfig.currentStoreDetail.address.region_id;
                 address.countryId=window.checkoutConfig.currentStoreDetail.address.country_id;
-                address.street=window.checkoutConfig.currentStoreDetail.address.street;
+                address.street=[window.checkoutConfig.currentStoreDetail.address.street];
                 address.company=window.checkoutConfig.currentStoreDetail.name;
                 address.postcode=window.checkoutConfig.currentStoreDetail.address.postcode;
                 address.city=window.checkoutConfig.currentStoreDetail.address.city;
@@ -51,7 +51,7 @@ define([
                 address.email=window.checkoutConfig.customerData.email;
                 address.prefix=window.checkoutConfig.customerData.prefix;
                 address.region_code=window.checkoutConfig.currentStoreDetail.address.region_id;
-                address.telephone=window.checkoutConfig.currentStoreDetail.address.region;
+                // address.telephone=window.checkoutConfig.currentStoreDetail.address.region;
                 this.address(address);
                 this.selectAddress();
             }
