@@ -163,9 +163,11 @@ class GetSkuByRequest extends \Magento\Framework\App\Action\Action
         $response = $this->helper->request('/get-store?order_type=cnr&store_view=1&skus[]=' . $sku);
         if($response['error']==false){
             $result['inventory'] = $response['data'][$sku]['warehouses'];
-            foreach ($result['inventory'] as $key=>$value){
-                $result['inventory'][$key]['status']=$this->deliveryHelper->getStatus($value['net'],$value['actual']);
-                $result['inventory'][$key]['minMax']=$this->deliveryHelper->getMinMaxDay($result['inventory'][$key]['status']);
+            if(sizeof($result['inventory'])>0) {
+                foreach ($result['inventory'] as $key => $value) {
+                    $result['inventory'][$key]['status'] = $this->deliveryHelper->getStatus($value['net'], $value['actual']);
+                    $result['inventory'][$key]['minMax'] = $this->deliveryHelper->getMinMaxDay($result['inventory'][$key]['status']);
+                }
             }
         }
         try {
