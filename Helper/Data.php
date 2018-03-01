@@ -288,6 +288,9 @@ class Data extends AbstractHelper implements \Cleargo\Clearomni\Helper\Clearomni
         if (isset($stock[$storeCode])) {
             return $stock[$storeCode];
         }
+        if($storeCode==false){
+            return $stock;
+        }
         return [];
 
     }

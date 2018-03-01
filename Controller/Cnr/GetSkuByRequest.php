@@ -97,10 +97,12 @@ class GetSkuByRequest extends \Magento\Framework\App\Action\Action
      * @var \Magento\Framework\Json\Helper\Data
      */
     protected $jsonHelper;
+
+
     /**
      * Constructor
      *
-     * @param \Magento\Framework\App\Action\Context  $context
+     * @param \Magento\Framework\App\Action\Context $context
      * @param \Magento\Framework\Json\Helper\Data $jsonHelper
      */
     public function __construct(
@@ -121,7 +123,8 @@ class GetSkuByRequest extends \Magento\Framework\App\Action\Action
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\Json\Helper\Data $jsonHelper,
         \Cleargo\DeliveryMinMaxDay\Helper\Data $deliveryHelper
-    ) {
+    )
+    {
         $this->_eventManager = $eventManager;
         $this->_scopeConfig = $scopeConfig;
         $this->_storeManager = $storeManager;
@@ -133,11 +136,11 @@ class GetSkuByRequest extends \Magento\Framework\App\Action\Action
         $this->stockState = $stockState;
         $this->quoteRepository = $quoteRepository;
         $this->productRepository = $productRepository;
-        $this->configurable=$configurable;
-        $this->helper=$helper;
-        $this->logger=$logger;
+        $this->configurable = $configurable;
+        $this->helper = $helper;
+        $this->logger = $logger;
         $this->jsonHelper = $jsonHelper;
-        $this->deliveryHelper=$deliveryHelper;
+        $this->deliveryHelper = $deliveryHelper;
         parent::__construct($context);
     }
 
@@ -148,22 +151,24 @@ class GetSkuByRequest extends \Magento\Framework\App\Action\Action
      */
     public function execute()
     {
-        $result=[
-            'result'=>'true'
+        $result = [
+            'result' => 'true'
         ];
-        $product=$this->productRepository->get($this->getRequest()->getParam('sku'));
-        $request=$this->getRequest()->getParam('super_attribute');
-        $childProduct =  $this->configurable->getProductByAttributes($request,$product);
-        if($childProduct){
-            $sku=$childProduct->getSku();
-        }else{
-            $sku=$this->getRequest()->getParam('sku');
+        $product = $this->productRepository->get($this->getRequest()->getParam('sku'));
+        $parentId = $this->configurable->getParentIdsByChild($product->getId());
+        $request = $this->getRequest()->getParam('super_attribute');
+        $parentProduct=$this->productRepository->getById($parentId[0]);
+        $childProduct = $this->configurable->getProductByAttributes($request, $parentProduct);
+        if ($childProduct) {
+            $sku = $childProduct->getSku();
+        } else {
+            $sku = $this->getRequest()->getParam('sku');
         }
-        $result['sku']=$sku;
+        $result['sku'] = $sku;
         $response = $this->helper->request('/get-store?order_type=cnr&store_view=1&skus[]=' . $sku);
-        if($response['error']==false){
+        if ($response['error'] == false) {
             $result['inventory'] = $response['data'][$sku]['warehouses'];
-            if(sizeof($result['inventory'])>0) {
+            if (sizeof($result['inventory']) > 0) {
                 foreach ($result['inventory'] as $key => $value) {
                     $result['inventory'][$key]['status'] = $this->deliveryHelper->getStatus($value['net'], $value['actual']);
                     $result['inventory'][$key]['minMax'] = $this->deliveryHelper->getMinMaxDay($result['inventory'][$key]['status']);
@@ -217,6 +222,7 @@ class GetSkuByRequest extends \Magento\Framework\App\Action\Action
         }
         return $product;
     }
+
     protected function _getProductRequest($requestInfo)
     {
         if ($requestInfo instanceof \Magento\Framework\DataObject) {
@@ -234,6 +240,7 @@ class GetSkuByRequest extends \Magento\Framework\App\Action\Action
 
         return $request;
     }
+
     private function getRequestInfoFilter()
     {
         if ($this->requestInfoFilter === null) {

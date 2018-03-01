@@ -122,6 +122,7 @@ class Availability extends \Smile\RetailerOffer\Block\Catalog\Product\Retailer\A
                 }
             }
         }
+        $warehouses=$this->helper->getProductAvailability($result['components']['catalog-product-retailer-availability']['productId'],false,false,$this->requestType);
         foreach ($result['components']['catalog-product-retailer-availability']['storeOffers'] as $key=>$value){
             $seller=$this->retailerRepository->get($value['sellerId']);
             $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['id']=$result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['entity_id']=$seller->getId();
@@ -131,7 +132,8 @@ class Availability extends \Smile\RetailerOffer\Block\Catalog\Product\Retailer\A
             $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['address']=$seller->getExtensionAttributes()->getAddress()->getData();
             $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['cleargoOpeningHour']=$seller->getCleargoOpeningHour();
             $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['openingHour']=$seller->getExtensionAttributes()->getOpeningHours();
-            $availability=$this->helper->getProductAvailability($result['components']['catalog-product-retailer-availability']['productId'],$seller->getSellerCode(),false,$this->requestType);
+//            $availability=$this->helper->getProductAvailability($result['components']['catalog-product-retailer-availability']['productId'],$seller->getSellerCode(),false,$this->requestType);
+            $availability=isset($warehouses[$seller->getSellerCode()])?$warehouses[$seller->getSellerCode()]:[];
             if(!empty($availability)) {
                 $stock=$this->helper->getNetActual($availability);
                 $net=$stock['net'];
