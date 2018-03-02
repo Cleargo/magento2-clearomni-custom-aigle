@@ -138,7 +138,6 @@ class Submit extends \Magento\Framework\App\Action\Action
             "shipping_method_code"=> "smilestoredelivery",
             "shipping_carrier_code"=> "smilestoredelivery"
         ];
-
         $data = $this->cartHelper->placeOrder($payload);
         $result = [
             'result' => 'true',

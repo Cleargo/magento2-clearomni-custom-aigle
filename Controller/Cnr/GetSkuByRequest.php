@@ -157,8 +157,12 @@ class GetSkuByRequest extends \Magento\Framework\App\Action\Action
         $product = $this->productRepository->get($this->getRequest()->getParam('sku'));
         $parentId = $this->configurable->getParentIdsByChild($product->getId());
         $request = $this->getRequest()->getParam('super_attribute');
-        $parentProduct=$this->productRepository->getById($parentId[0]);
-        $childProduct = $this->configurable->getProductByAttributes($request, $parentProduct);
+        try {
+            $parentProduct = $this->productRepository->getById($parentId[0]);
+            $childProduct = $this->configurable->getProductByAttributes($request, $parentProduct);
+        }catch(\Exception $e){
+            $childProduct = $this->configurable->getProductByAttributes($request, $product);
+        }
         if ($childProduct) {
             $sku = $childProduct->getSku();
         } else {
@@ -167,11 +171,21 @@ class GetSkuByRequest extends \Magento\Framework\App\Action\Action
         $result['sku'] = $sku;
         $response = $this->helper->request('/get-store?order_type=cnr&store_view=1&skus[]=' . $sku);
         if ($response['error'] == false) {
-            $result['inventory'] = $response['data'][$sku]['warehouses'];
-            if (sizeof($result['inventory']) > 0) {
-                foreach ($result['inventory'] as $key => $value) {
-                    $result['inventory'][$key]['status'] = $this->deliveryHelper->getStatus($value['net'], $value['actual']);
-                    $result['inventory'][$key]['minMax'] = $this->deliveryHelper->getMinMaxDay($result['inventory'][$key]['status']);
+            $result['cnr']['inventory'] = $response['data'][$sku]['warehouses'];
+            if (sizeof($result['cnr']['inventory']) > 0) {
+                foreach ($result['cnr']['inventory'] as $key => $value) {
+                    $result['cnr']['inventory'][$key]['status'] = $this->deliveryHelper->getStatus($value['net'], $value['actual']);
+                    $result['cnr']['inventory'][$key]['minMax'] = $this->deliveryHelper->getMinMaxDay($result['cnr']['inventory'][$key]['status']);
+                }
+            }
+        }
+        $response2 = $this->helper->request('/get-store?order_type=cnc&store_view=1&skus[]=' . $sku);
+        if ($response2['error'] == false) {
+            $result['cnc']['inventory'] = $response2['data'][$sku]['warehouses'];
+            if (sizeof($result['cnc']['inventory']) > 0) {
+                foreach ($result['cnc']['inventory'] as $key => $value) {
+                    $result['cnc']['inventory'][$key]['status'] = $this->deliveryHelper->getStatus($value['net'], $value['actual']);
+                    $result['cnc']['inventory'][$key]['minMax'] = $this->deliveryHelper->getMinMaxDay($result['cnc']['inventory'][$key]['status']);
                 }
             }
         }

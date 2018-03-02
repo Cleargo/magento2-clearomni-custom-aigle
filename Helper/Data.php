@@ -43,6 +43,7 @@ class Data extends AbstractHelper implements \Cleargo\Clearomni\Helper\Clearomni
     protected $productRepository;
     protected $clearomniHelper;
     protected $deliveryHelper;
+    protected $registry;
 
     /**
      * @param Magento\Framework\App\Helper\Context $context
@@ -66,7 +67,8 @@ class Data extends AbstractHelper implements \Cleargo\Clearomni\Helper\Clearomni
         \Magento\Customer\Model\Session $customerSession,
         \Magento\Catalog\Api\ProductRepositoryInterface $productRepository,
         \Cleargo\Clearomni\Helper\Request $clearomniHelper,
-        \Cleargo\DeliveryMinMaxDay\Helper\Data $deliveryHelper
+        \Cleargo\DeliveryMinMaxDay\Helper\Data $deliveryHelper,
+        \Magento\Framework\Registry $registry
     )
     {
         $this->_objectManager = $objectManager;
@@ -83,6 +85,7 @@ class Data extends AbstractHelper implements \Cleargo\Clearomni\Helper\Clearomni
         $this->productRepository = $productRepository;
         $this->clearomniHelper = $clearomniHelper;
         $this->deliveryHelper = $deliveryHelper;
+        $this->registry=$registry;
         parent::__construct($context);
     }
 
@@ -244,7 +247,11 @@ class Data extends AbstractHelper implements \Cleargo\Clearomni\Helper\Clearomni
             $product = $this->productRepository->getById($productId);
         }
         $productSku = $product->getSku();
-        $response = $this->clearomniHelper->request('/get-store?order_type='.$type.'&store_view=1&skus[]=' . $productSku);
+        $response=$this->registry->registry('/get-store?order_type='.$type.'&store_view=1&skus[]=' . $productSku);
+        if(!$response) {
+            $response = $this->clearomniHelper->request('/get-store?order_type=' . $type . '&store_view=1&skus[]=' . $productSku);
+            $this->registry->register('/get-store?order_type=' . $type . '&store_view=1&skus[]=' . $productSku, $response);
+        }
         if($type=='cnc'){//testing data
             if ($product->getTypeId() == 'configurable') {
 //                $response = json_decode('{"error":false,"data":{"G9768":{"available":0,"warehouses":[{"id":1,"code":"ACP","actual":0,"net":0},{"id":2,"code":"AFW","actual":0,"net":0},{"id":3,"code":"AKT","actual":0,"net":0},{"id":4,"code":"ANP","actual":0,"net":0},{"id":5,"code":"ATS","actual":0,"net":0},{"id":9,"code":"AET","actual":0,"net":0},{"id":10,"code":"AIFC","actual":0,"net":0},{"id":11,"code":"AMM","actual":0,"net":0},{"id":12,"code":"AOT","actual":0,"net":0},{"id":13,"code":"AVC","actual":0,"net":0},{"id":14,"code":"APC","actual":0,"net":0},{"id":15,"code":"ASG","actual":0,"net":0},{"id":16,"code":"AST","actual":0,"net":0},{"id":17,"code":"AYM","actual":0,"net":0},{"id":18,"code":"AFM","actual":0,"net":0},{"id":19,"code":"ATO","actual":0,"net":0}],"children":{"G9768-36":{"available":1003,"warehouses":[{"id":1,"code":"ACP","actual":0,"net":0},{"id":2,"code":"AFW","actual":0,"net":0},{"id":3,"code":"AKT","actual":0,"net":0},{"id":4,"code":"ANP","actual":0,"net":0},{"id":5,"code":"ATS","actual":0,"net":0},{"id":9,"code":"AET","actual":0,"net":0},{"id":10,"code":"AIFC","actual":0,"net":0},{"id":11,"code":"AMM","actual":0,"net":0},{"id":12,"code":"AOT","actual":0,"net":0},{"id":13,"code":"AVC","actual":0,"net":0},{"id":14,"code":"APC","actual":0,"net":0},{"id":15,"code":"ASG","actual":0,"net":0},{"id":16,"code":"AST","actual":0,"net":0},{"id":17,"code":"AYM","actual":0,"net":0},{"id":18,"code":"AFM","actual":0,"net":0},{"id":19,"code":"ATO","actual":1003,"net":1003}]},"G9768-34":{"available":1004,"warehouses":[{"id":1,"code":"ACP","actual":0,"net":0},{"id":2,"code":"AFW","actual":0,"net":0},{"id":3,"code":"AKT","actual":0,"net":0},{"id":4,"code":"ANP","actual":0,"net":0},{"id":5,"code":"ATS","actual":0,"net":0},{"id":9,"code":"AET","actual":0,"net":0},{"id":10,"code":"AIFC","actual":0,"net":0},{"id":11,"code":"AMM","actual":0,"net":0},{"id":12,"code":"AOT","actual":0,"net":0},{"id":13,"code":"AVC","actual":0,"net":0},{"id":14,"code":"APC","actual":0,"net":0},{"id":15,"code":"ASG","actual":0,"net":0},{"id":16,"code":"AST","actual":0,"net":0},{"id":17,"code":"AYM","actual":0,"net":0},{"id":18,"code":"AFM","actual":0,"net":0},{"id":19,"code":"ATO","actual":1004,"net":1004}]},"G9768-38":{"available":1002,"warehouses":[{"id":1,"code":"ACP","actual":0,"net":0},{"id":2,"code":"AFW","actual":0,"net":0},{"id":3,"code":"AKT","actual":0,"net":0},{"id":4,"code":"ANP","actual":0,"net":0},{"id":5,"code":"ATS","actual":0,"net":0},{"id":9,"code":"AET","actual":0,"net":0},{"id":10,"code":"AIFC","actual":0,"net":0},{"id":11,"code":"AMM","actual":0,"net":0},{"id":12,"code":"AOT","actual":0,"net":0},{"id":13,"code":"AVC","actual":0,"net":0},{"id":14,"code":"APC","actual":0,"net":0},{"id":15,"code":"ASG","actual":0,"net":0},{"id":16,"code":"AST","actual":0,"net":0},{"id":17,"code":"AYM","actual":0,"net":0},{"id":18,"code":"AFM","actual":0,"net":0},{"id":19,"code":"ATO","actual":1002,"net":1002}]},"G9768-40":{"available":999,"warehouses":[{"id":1,"code":"ACP","actual":0,"net":0},{"id":2,"code":"AFW","actual":0,"net":0},{"id":3,"code":"AKT","actual":0,"net":0},{"id":4,"code":"ANP","actual":0,"net":0},{"id":5,"code":"ATS","actual":0,"net":0},{"id":9,"code":"AET","actual":0,"net":0},{"id":10,"code":"AIFC","actual":0,"net":0},{"id":11,"code":"AMM","actual":0,"net":0},{"id":12,"code":"AOT","actual":0,"net":0},{"id":13,"code":"AVC","actual":0,"net":0},{"id":14,"code":"APC","actual":0,"net":0},{"id":15,"code":"ASG","actual":0,"net":0},{"id":16,"code":"AST","actual":0,"net":0},{"id":17,"code":"AYM","actual":0,"net":0},{"id":18,"code":"AFM","actual":0,"net":0},{"id":19,"code":"ATO","actual":999,"net":999}]},"G9768-42":{"available":1000,"warehouses":[{"id":1,"code":"ACP","actual":0,"net":0},{"id":2,"code":"AFW","actual":0,"net":0},{"id":3,"code":"AKT","actual":0,"net":0},{"id":4,"code":"ANP","actual":0,"net":0},{"id":5,"code":"ATS","actual":0,"net":0},{"id":9,"code":"AET","actual":0,"net":0},{"id":10,"code":"AIFC","actual":0,"net":0},{"id":11,"code":"AMM","actual":0,"net":0},{"id":12,"code":"AOT","actual":0,"net":0},{"id":13,"code":"AVC","actual":0,"net":0},{"id":14,"code":"APC","actual":0,"net":0},{"id":15,"code":"ASG","actual":0,"net":0},{"id":16,"code":"AST","actual":0,"net":0},{"id":17,"code":"AYM","actual":0,"net":0},{"id":18,"code":"AFM","actual":0,"net":0},{"id":19,"code":"ATO","actual":1000,"net":1000}]},"G9768-44":{"available":1001,"warehouses":[{"id":1,"code":"ACP","actual":0,"net":0},{"id":2,"code":"AFW","actual":0,"net":0},{"id":3,"code":"AKT","actual":0,"net":0},{"id":4,"code":"ANP","actual":0,"net":0},{"id":5,"code":"ATS","actual":0,"net":0},{"id":9,"code":"AET","actual":0,"net":0},{"id":10,"code":"AIFC","actual":0,"net":0},{"id":11,"code":"AMM","actual":0,"net":0},{"id":12,"code":"AOT","actual":0,"net":0},{"id":13,"code":"AVC","actual":0,"net":0},{"id":14,"code":"APC","actual":0,"net":0},{"id":15,"code":"ASG","actual":0,"net":0},{"id":16,"code":"AST","actual":0,"net":0},{"id":17,"code":"AYM","actual":0,"net":0},{"id":18,"code":"AFM","actual":0,"net":0},{"id":19,"code":"ATO","actual":1001,"net":1001}]}}}}}', true);
@@ -259,6 +266,8 @@ class Data extends AbstractHelper implements \Cleargo\Clearomni\Helper\Clearomni
             } else {
                 $productInventory = $response['data'][$productSku];
             }
+        }else{
+            return [];
         }
         //turn sku->warehouse  to warehouse->sku
         $stock = [];

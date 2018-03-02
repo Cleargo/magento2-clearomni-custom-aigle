@@ -85,44 +85,48 @@ class Availability extends \Smile\RetailerOffer\Block\Catalog\Product\Retailer\A
         $result=parent::getJsLayout();
         $result=json_decode($result,true);
         //get clearomni stock
-        $product=$this->registry->registry('product');
-        if($product) {
-            $response = $this->clearomniHelper->request('/get-store?order_type='.$this->requestType.'&store_view=1&skus[]=' . $product->getSku());
-            if($response['error']==false){
-                if(isset($response['data'][$product->getSku()]['children'])) {
-                    $productInventory = $response['data'][$product->getSku()]['children'];
-                }else{
-                    $productInventory = $response['data'][$product->getSku()];
-                }
-            }
+        $product=$this->registry->registry('firebear_product');
+        if($product){
+            $result['components']['catalog-product-retailer-availability']['productId']=$product->getId();
         }
+//        if($product) {
+////            $response=$this->helper->getProductAvailability($product->getSku(),false,true,$this->requestType);
+//            $response = $this->clearomniHelper->request('/get-store?order_type='.$this->requestType.'&store_view=1&skus[]=' . $product->getSku());
+//            if(!empty($response)){
+//                if(isset($response['data'][$product->getSku()]['children'])) {
+//                    $productInventory = $response['data'][$product->getSku()]['children'];
+//                }else{
+//                    $productInventory = $response['data'][$product->getSku()];
+//                }
+//            }
+//        }
 //        var_dump('/get-store?order_type='.$this->requestType.'&store_view=1&skus[]=' . $product->getSku(),$productInventory);
 //        exit;
         //turn sku->warehouse  to warehouse->sku
-        $stock=[];
-        if(isset($productInventory)) {
-
-            foreach ($productInventory as $key => $value) {
-                if(isset($value['warehouses'])) {
-                    foreach ($value['warehouses'] as $key2 => $value2) {
-                        if (!isset($stock[$value2['code']])) {
-                            $stock[$value2['code']] = ['net' => '', 'actual' => ''];
-                        }
-                        $stock[$value2['code']][$key]['net'] = $value2['net'];
-                        $stock[$value2['code']][$key]['actual'] = $value2['actual'];
-                    }
-                }else{
-                    foreach ($productInventory['warehouses'] as $key2 => $value2) {
-                        if (!isset($stock[$value2['code']])) {
-                            $stock[$value2['code']] = ['net' => $value2['net'], 'actual' => $value2['actual']];
-                        }
-                        $stock[$value2['code']][$key]['net'] = $value2['net'];
-                        $stock[$value2['code']][$key]['actual'] = $value2['actual'];
-                    }
-                }
-            }
-        }
+//        $stock=[];
+//        if(isset($productInventory)) {
+//            foreach ($productInventory as $key => $value) {
+//                if(isset($value['warehouses'])) {
+//                    foreach ($value['warehouses'] as $key2 => $value2) {
+//                        if (!isset($stock[$value2['code']])) {
+//                            $stock[$value2['code']] = ['net' => '', 'actual' => ''];
+//                        }
+//                        $stock[$value2['code']][$key]['net'] = $value2['net'];
+//                        $stock[$value2['code']][$key]['actual'] = $value2['actual'];
+//                    }
+//                }else{
+//                    foreach ($productInventory['warehouses'] as $key2 => $value2) {
+//                        if (!isset($stock[$value2['code']])) {
+//                            $stock[$value2['code']] = ['net' => $value2['net'], 'actual' => $value2['actual']];
+//                        }
+//                        $stock[$value2['code']][$key]['net'] = $value2['net'];
+//                        $stock[$value2['code']][$key]['actual'] = $value2['actual'];
+//                    }
+//                }
+//            }
+//        }
         $warehouses=$this->helper->getProductAvailability($result['components']['catalog-product-retailer-availability']['productId'],false,false,$this->requestType);
+//        $result['components']['catalog-product-retailer-availability']['productId']=$product->getId();
         foreach ($result['components']['catalog-product-retailer-availability']['storeOffers'] as $key=>$value){
             $seller=$this->retailerRepository->get($value['sellerId']);
             $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['id']=$result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['entity_id']=$seller->getId();
@@ -135,7 +139,13 @@ class Availability extends \Smile\RetailerOffer\Block\Catalog\Product\Retailer\A
 //            $availability=$this->helper->getProductAvailability($result['components']['catalog-product-retailer-availability']['productId'],$seller->getSellerCode(),false,$this->requestType);
             $availability=isset($warehouses[$seller->getSellerCode()])?$warehouses[$seller->getSellerCode()]:[];
             if(!empty($availability)) {
-                $stock=$this->helper->getNetActual($availability);
+                $stock=$availability;
+                if(isset($availability['net'])){//simple product
+                }else{//config product
+                    //get first child as selected
+                    $keys=array_keys($stock);
+                    $stock=$stock[$keys[0]];
+                }
                 $net=$stock['net'];
                 $actual=$stock['actual'];
 //                if($net<=0&&$actual<=0){
@@ -151,8 +161,8 @@ class Availability extends \Smile\RetailerOffer\Block\Catalog\Product\Retailer\A
             $minMaxDay=$this->deliveryHelper->getMinMaxDay($availability);
             $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['minDay']=$result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['finalMinDay']=$minMaxDay['min'];
             $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['maxDay']=$result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['finalMaxDay']=$minMaxDay['max'];
-            if(isset($stock[$seller->getSellerCode()])) {
-                $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['stock'] = $stock[$seller->getSellerCode()]['net'];
+            if(isset($stock)) {
+                $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['stock'] = $stock['net'];
             }else{
                 $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['stock']=[];
             }

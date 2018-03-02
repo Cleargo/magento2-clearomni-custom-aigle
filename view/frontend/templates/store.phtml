@@ -14,7 +14,6 @@ if ($block->currentProduct()) {
 } else {
     $storeAvail = $helper->getCartAvailableInStore('cnc');
 }
-//exit;
 ?>
 <?php if (!empty($storeAvail)): ?>
     <select name="store" id="selectedStore" class="store-selector">
@@ -68,8 +67,9 @@ if ($block->currentProduct()) {
                                 var sku = message.sku;
                                 $('body').trigger('processStop');
                                 $('.store-selector option').each(function () {
+                                    $(this).prop('disabled',true);
                                     var storeCode = $(this).data('storecode');
-                                    var stock = message.inventory;
+                                    var stock = message.cnc.inventory;
                                     var shopItem = 0;
                                     //get stock
                                     stock.forEach(function (value) {
@@ -86,13 +86,17 @@ if ($block->currentProduct()) {
                                     $(this).data('maxday', shopItem['minMax']['max']);
                                     if (shopItem['net'] > 0) {
                                         $(this).data('available', true);
+                                        $(this).prop('disabled',false);
                                     } else {
                                         $(this).data('available', false);
                                         // $(this).addClass('oosHide');
                                     }
                                 });
+                            }).always(function(){
+                                $('body').trigger('processStop');
                             });
                         });
+//                        $('.super-attribute-select').change();
                         clearInterval(interval);
                     }
                 },1000);
