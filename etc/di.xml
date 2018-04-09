@@ -7,6 +7,6 @@
         </arguments>
     </type>
     <type name="Magento\Framework\App\Action\AbstractAction">
-        <plugin name="dispatchController-context-plugin" type="Cleargo\AigleClearomniConnector\Plugin\App\Action\Context" sortOrder="15"/>
+        <plugin name="dispatchController-context-plugin" type="Cleargo\AigleClearomniConnector\Plugin\App\Action\Context" sortOrder="15" disabled="false"/>
     </type>
 </config>

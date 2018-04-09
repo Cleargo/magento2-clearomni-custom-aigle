@@ -27,6 +27,11 @@ class Login extends \Magento\Customer\Controller\AbstractAccount
     protected $session;
 
     /**
+     * @var \Magento\Checkout\Model\Session
+     */
+    protected $checkoutSession;
+
+    /**
      * @var ScopeConfigInterface
      */
     private $scopeConfig;
@@ -61,10 +66,12 @@ class Login extends \Magento\Customer\Controller\AbstractAccount
         \Magento\Customer\Model\Url $customerHelperData,
         \Magento\Framework\Data\Form\FormKey\Validator $formKeyValidator,
         \Magento\Customer\Model\Account\Redirect $accountRedirect,
-        \Magento\Framework\Json\Helper\Data $jsonHelper
+        \Magento\Framework\Json\Helper\Data $jsonHelper,
+        \Magento\Checkout\Model\Session $checkoutSession
     )
     {
         $this->session = $customerSession;
+        $this->checkoutSession = $checkoutSession;
         $this->customerAccountManagement = $customerAccountManagement;
         $this->customerUrl = $customerHelperData;
         $this->formKeyValidator = $formKeyValidator;
@@ -147,7 +154,8 @@ class Login extends \Magento\Customer\Controller\AbstractAccount
             if (!empty($login['username']) && !empty($login['password'])) {
                 try {
                     $customer = $this->customerAccountManagement->authenticate($login['username'], $login['password']);
-                    $this->session->setCustomerDataAsLoggedIn($customer);
+                    $this->session->loginById($customer->getId());
+                    $this->checkoutSession->setCustomerId($customer->getId());
                     $this->session->regenerateId();
                     if ($this->getCookieManager()->getCookie('mage-cache-sessid')) {
                         $metadata = $this->getCookieMetadataFactory()->createCookieMetadata();

@@ -73,10 +73,16 @@ class AddOrderInfo extends \Magento\Framework\App\Action\Action
 //        $isLoggedIn = $context->getValue(\Magento\Customer\Model\Context::CONTEXT_AUTH);
 //        $customer=$this->cartHelper->getCurrentCustomer()->getCustomer();
         $customer=$this->customerSession->getCustomer();
-        if(!$customer->getFirstName()){
+//        var_dump($customer->getData());
+        if(!$customer->getFirstname()){
             $repos=$this->cartHelper->getCustomerRepos();
             $customer=$this->_objectManager->create('Magento\Customer\Model\Customer')->load($context->getValue(\Cleargo\AigleClearomniConnector\Model\Customer\Context::CONTEXT_CUSTOMER_ID));
         }
+        if(!$customer->getFirstname()){
+            $repos=$this->cartHelper->getCustomerRepos();
+            $customer=$this->_objectManager->create('Magento\Customer\Model\Customer')->load($this->cartHelper->getCheckoutSession()->getCustomerId());
+        }
+//        var_dump($customer->getData(),$this->cartHelper->getCheckoutSession()->getCustomerId(),$context->getValue(\Cleargo\AigleClearomniConnector\Model\Customer\Context::CONTEXT_CUSTOMER_ID));
 //        var_dump($context->getValue(\Cleargo\AigleClearomniConnector\Model\Customer\Context::CONTEXT_CUSTOMER_ID));
 //        exit;
 //        var_dump($this->customerSession->getCustomer()->getData());

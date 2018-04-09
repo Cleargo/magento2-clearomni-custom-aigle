@@ -101,7 +101,14 @@ class Submit extends \Magento\Framework\App\Action\Action
         $address=$retailer->getExtensionAttributes()->getAddress()->getData();
         $context = $this->_objectManager->get('Magento\Framework\App\Http\Context');
         $customer=$this->customerSession->getCustomer();
-        if(!$customer->getFirstName()){
+        $customerId=$this->customerSession->getCustomerId();
+        $objectManager=\Magento\Framework\App\ObjectManager::getInstance();
+        try {
+            $customer=$objectManager->create('Magento\Customer\Model\Customer')->load($customerId);
+        }catch (\Exception $e){
+            $customer=$this->getCustomerSession()->getCustomer();
+        }
+        if(!$customer->getFirstname()){
             $repos=$this->cartHelper->getCustomerRepos();
             $customer=$this->_objectManager->create('Magento\Customer\Model\Customer')->load($context->getValue(\Cleargo\AigleClearomniConnector\Model\Customer\Context::CONTEXT_CUSTOMER_ID));
         }

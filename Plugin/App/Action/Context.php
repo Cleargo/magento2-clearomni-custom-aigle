@@ -52,6 +52,7 @@ class Context
             false
         );
 //        var_dump($customerId);
+//        echo ' ';//no idea why i have to print something to make session not disappear
         return $proceed($request);
     }
 }
