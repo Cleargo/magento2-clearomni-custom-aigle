@@ -16,16 +16,23 @@ class Context
     protected $httpContext;
 
     /**
+     * @var \Magento\Framework\App\Cache\StateInterface
+     */
+    protected $cacheState;
+
+    /**
      * @param \Magento\Customer\Model\Session $customerSession
      * @param \Magento\Framework\App\Http\Context $httpContext
      */
     public function __construct(
         \Magento\Customer\Model\Session $customerSession,
-        \Magento\Framework\App\Http\Context $httpContext
+        \Magento\Framework\App\Http\Context $httpContext,
+        \Magento\Framework\App\Cache\StateInterface $cacheState
     )
     {
         $this->customerSession = $customerSession;
         $this->httpContext = $httpContext;
+        $this->cacheState = $cacheState;
     }
 
     /**
@@ -35,12 +42,15 @@ class Context
      * @return mixed
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function aroundDispatch(
-        \Magento\Framework\App\ActionInterface $subject,
-        \Closure $proceed,
-        \Magento\Framework\App\RequestInterface $request
-    )
+    public function beforeDispatch(\Magento\Framework\App\Action\AbstractAction $subject, \Magento\Framework\App\RequestInterface $request)
     {
+        /** @var bool $isEnabled */
+//        $isEnabled = $this->cacheState->isEnabled(
+//            \Magento\PageCache\Model\Cache\Type::TYPE_IDENTIFIER
+//        );
+//        if (!$isEnabled) {
+//            return;
+//        }
         $customerId = $this->customerSession->getCustomerId();
         if (!$customerId) {
             $customerId = 0;
@@ -53,6 +63,5 @@ class Context
         );
 //        var_dump($customerId);
 //        echo ' ';//no idea why i have to print something to make session not disappear
-        return $proceed($request);
     }
 }
