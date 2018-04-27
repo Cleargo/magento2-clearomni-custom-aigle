@@ -248,7 +248,7 @@ class Data extends AbstractHelper implements \Cleargo\Clearomni\Helper\Clearomni
         }
         $productSku = $product->getSku();
         $response=$this->registry->registry('/get-store?order_type='.$type.'&store_view=1&skus[]=' . $productSku);
-        if(!$response) {
+        if(empty($response)) {
             $response = $this->clearomniHelper->request('/get-store?order_type=' . $type . '&store_view=1&skus[]=' . $productSku);
             $this->registry->register('/get-store?order_type=' . $type . '&store_view=1&skus[]=' . $productSku, $response);
         }

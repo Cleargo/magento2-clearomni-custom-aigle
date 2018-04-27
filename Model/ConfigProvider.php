@@ -54,7 +54,11 @@ class ConfigProvider implements \Magento\Checkout\Model\ConfigProviderInterface
             $config['currentStore'] = $this->ccHelper->getCustomerSession()->getRetailerId();
             $config['currentStoreDetail'] = $retailer->getData();
             $config['currentStoreDetail']['address'] = $retailer->getExtensionAttributes()->getAddress()->getData();
-            $config['allStoreAvailability']=array_values($this->ccHelper->getCartAvailableInStore('cnc'));
+            $availStore=$this->ccHelper->getCartAvailableInStore('cnc');
+            $config['allStoreAvailability']=array_values($availStore);
+            $config['currentStoreDetail']['finalMinDay']=$availStore[$retailer->getId()]['finalMinDay'];
+            $config['currentStoreDetail']['finalMaxDay']=$availStore[$retailer->getId()]['finalMaxDay'];
+            $config['currentStoreDetail']['finalAvailability']=$availStore[$retailer->getId()]['finalAvailability'];
         }catch(\Exception $e){
 
         }

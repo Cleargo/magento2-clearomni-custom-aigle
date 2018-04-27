@@ -68,6 +68,7 @@ define([
         isCustomerLoggedIn: customer.isLoggedIn,
         isFormPopUpVisible: formPopUpState.isVisible,
         isFormInline: addressList().length === 0,
+        // isFormInline: false,
         isNewAddressAdded: ko.observable(false),
         saveInAddressBook: 1,
         quoteIsVirtual: quote.isVirtual(),
@@ -77,6 +78,7 @@ define([
          * @return {exports}
          */
         initialize: function () {
+            console.log(this.isFormInline);
             var self = this,
                 hasNewAddress,
                 fieldsetName = 'checkout.steps.shipping-step.shippingAddress.shipping-address-fieldset';
@@ -262,6 +264,7 @@ define([
          * @return {Boolean}
          */
         validateShippingInformation: function () {
+            console.log('validateShippingInformation');
             var shippingAddress,
                 addressData,
                 loginFormSelector = 'form[data-role=email-with-possible-login]',
@@ -370,6 +373,9 @@ define([
                 console.log('done1');
                 window.checkoutConfig.currentStore=self.currentRetailerId();
                 window.checkoutConfig.currentStoreDetail=message.currentStoreDetail;
+                console.log(address);
+                console.log(quote.shippingAddress());
+                console.log(quote);
                 address.extension_attributes.retailer_id=window.checkoutConfig.currentStore;
                 address.region=window.checkoutConfig.currentStoreDetail.address.region;
                 address.regionId=window.checkoutConfig.currentStoreDetail.address.region_id;
@@ -378,14 +384,19 @@ define([
                 address.company=window.checkoutConfig.currentStoreDetail.name;
                 address.postcode=window.checkoutConfig.currentStoreDetail.address.postcode;
                 address.city=window.checkoutConfig.currentStoreDetail.address.city;
-                address.firstname=window.checkoutConfig.customerData.firstname;
-                address.lastname=window.checkoutConfig.customerData.lastname;
-                address.email=window.checkoutConfig.customerData.email;
-                address.prefix=window.checkoutConfig.customerData.prefix;
+                if(window.checkoutConfig.isCustomerLoggedIn) {
+                    address.firstname = window.checkoutConfig.customerData.firstname;
+                    address.lastname = window.checkoutConfig.customerData.lastname;
+                    address.email = window.checkoutConfig.customerData.email;
+                    address.prefix = window.checkoutConfig.customerData.prefix;
+                }
                 address.region_code=window.checkoutConfig.currentStoreDetail.address.region_id;
                 // address.telephone=window.checkoutConfig.currentStoreDetail.address.region;
                 // addressRender.updateAddress();
+                // this.address(quote.shippingAddress());
                 selectShippingAddress(address);
+                // checkoutData.setSelectedShippingAddress(address.getKey());
+                // console.log(address);
                 $('body').trigger('processStop');
             });
         }
