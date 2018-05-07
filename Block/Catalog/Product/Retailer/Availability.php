@@ -167,6 +167,12 @@ class Availability extends \Smile\RetailerOffer\Block\Catalog\Product\Retailer\A
                 $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['stock']=[];
             }
         }
+        usort($result['components']['catalog-product-retailer-availability']['storeOffers'], function($a, $b) {
+            //get their order
+            $aKey=array_search($a['finalAvailability'],\Cleargo\AigleClearomniConnector\Helper\Data::AVAILABILITY);
+            $bKey=array_search($b['finalAvailability'],\Cleargo\AigleClearomniConnector\Helper\Data::AVAILABILITY);
+            return $bKey - $aKey;
+        });
         return json_encode($result);
     }
 

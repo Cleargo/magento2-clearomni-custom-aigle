@@ -325,9 +325,11 @@ define([
             promise.done(function(){
                 console.log('done2');
                 shippingAddress = quote.shippingAddress();
-                shippingAddress.firstname=addressData['firstname'];
-                shippingAddress.lastname=addressData['lastname'];
-                shippingAddress.telephone=addressData['telephone'];
+                if(window.checkoutConfig.isCustomerLoggedIn) {
+                    shippingAddress.firstname = addressData['firstname'];
+                    shippingAddress.lastname = addressData['lastname'];
+                    shippingAddress.telephone = addressData['telephone'];
+                }
                 if(Array.isArray(shippingAddress.street)==false){
                     shippingAddress.street=[shippingAddress.street];
                 }
