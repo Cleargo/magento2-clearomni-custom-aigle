@@ -345,11 +345,11 @@ class Data extends AbstractHelper implements \Cleargo\Clearomni\Helper\Clearomni
             $data[$value->getId()]['finalMaxDay'] = max($data[$value->getId()]['maxDay']);
             $data[$value->getId()]['code'] = $value['seller_code'];
         }
-        $data=usort($data, function($a, $b) {
+        uasort($data, function($a, $b) {
             //get their order
             $aKey=array_search($a['finalAvailability'],\Cleargo\AigleClearomniConnector\Helper\Data::AVAILABILITY);
             $bKey=array_search($b['finalAvailability'],\Cleargo\AigleClearomniConnector\Helper\Data::AVAILABILITY);
-            return $aKey - $bKey;
+            return $bKey- $aKey;
         });
         return $data;
     }
