@@ -380,7 +380,7 @@ define([
                 console.log(quote);
                 address.extension_attributes.retailer_id=window.checkoutConfig.currentStore;
                 address.region=window.checkoutConfig.currentStoreDetail.address.region;
-                address.regionId=window.checkoutConfig.currentStoreDetail.address.region_id;
+                address.regionId=(window.checkoutConfig.currentStoreDetail.address.region_id)?window.checkoutConfig.currentStoreDetail.address.region_id:window.regionId[window.checkoutConfig.currentStoreDetail.address.hk_region.toLowerCase()];
                 address.countryId=window.checkoutConfig.currentStoreDetail.address.country_id;
                 address.street=[window.checkoutConfig.currentStoreDetail.address.street];
                 address.company=window.checkoutConfig.currentStoreDetail.name;
