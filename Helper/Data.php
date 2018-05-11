@@ -235,7 +235,7 @@ class Data extends AbstractHelper implements \Cleargo\Clearomni\Helper\Clearomni
     {
         /** @var \Smile\Retailer\Model\ResourceModel\Retailer\Collection $retailerCollection */
         $retailerCollection = $this->retailerCollectionFactory->create();
-        $retailerCollection->addAttributeToSelect('*')->addFieldToFilter('is_active', (int)true);
+        $retailerCollection->addAttributeToSelect('*')->addFieldToFilter('is_active', (int)true)->addFieldToFilter('allow_store_delivery',(int)true);
         return $retailerCollection;
     }
 

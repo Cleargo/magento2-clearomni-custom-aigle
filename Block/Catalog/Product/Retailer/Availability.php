@@ -129,6 +129,10 @@ class Availability extends \Smile\RetailerOffer\Block\Catalog\Product\Retailer\A
 //        $result['components']['catalog-product-retailer-availability']['productId']=$product->getId();
         foreach ($result['components']['catalog-product-retailer-availability']['storeOffers'] as $key=>$value){
             $seller=$this->retailerRepository->get($value['sellerId']);
+            if($seller->getAllowStoreDelivery()==false){
+                unset($result['components']['catalog-product-retailer-availability']['storeOffers'][$key]);
+                continue;
+            }
             $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['id']=$result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['entity_id']=$seller->getId();
             $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['code']=$seller->getSellerCode();
             $result['components']['catalog-product-retailer-availability']['storeOffers'][$key]['name']=$seller->getName();
