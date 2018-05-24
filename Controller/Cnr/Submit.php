@@ -115,6 +115,7 @@ class Submit extends \Magento\Framework\App\Action\Action
         if($params['is_subscribe']=='true'||$params['is_subscribe']==true){
 //            $this->subscriberFactory->create()->subscribeCustomerById($customer->getId());
         }
+        $customerData=$repos->getById($customer->getId());
         /**
          * {
          * "paymentMethod": {
@@ -140,7 +141,7 @@ class Submit extends \Magento\Framework\App\Action\Action
                 "email"=> $customer->getEmail(),
                 "prefix"=> $customer->getPrefix(),
                 "region_code"=> $address['region_id'],
-                "telephone"=>"26644557",
+                "telephone"=>$customerData->getCustomAttribute('vip_tel_1')?$customerData->getCustomAttribute('vip_tel_1')->getValue():'00000000',
             ],
             "shipping_method_code"=> "smilestoredelivery",
             "shipping_carrier_code"=> "smilestoredelivery"

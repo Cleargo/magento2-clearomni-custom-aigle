@@ -86,6 +86,8 @@ class AddOrderInfo extends \Magento\Framework\App\Action\Action
 //        var_dump($context->getValue(\Cleargo\AigleClearomniConnector\Model\Customer\Context::CONTEXT_CUSTOMER_ID));
 //        exit;
 //        var_dump($this->customerSession->getCustomer()->getData());
+
+        $customerData=$repos->getById($customer->getId());
         $payload=[
             'addressInformation'=>[
                 'shippingAddress'=>[
@@ -101,7 +103,7 @@ class AddOrderInfo extends \Magento\Framework\App\Action\Action
                     "email"=> $customer->getEmail(),
                     "prefix"=> $customer->getPrefix(),
                     "region_code"=> $address['region_id'],
-                    "telephone"=>"26644557",
+                    "telephone"=>$customerData->getCustomAttribute('vip_tel_1')?$customerData->getCustomAttribute('vip_tel_1')->getValue():'00000000',
                     "sameAsBilling"=> 1
                 ],
                 "billingAddress"=> [
@@ -117,7 +119,7 @@ class AddOrderInfo extends \Magento\Framework\App\Action\Action
                     "email"=> $customer->getEmail(),
                     "prefix"=> $customer->getPrefix(),
                     "region_code"=> $address['region_id'],
-                    "telephone"=>"26644557",
+                    "telephone"=>$customerData->getCustomAttribute('vip_tel_1')?$customerData->getCustomAttribute('vip_tel_1')->getValue():'00000000',
                 ],
                 "shipping_method_code"=> "smilestoredelivery",
                 "shipping_carrier_code"=> "smilestoredelivery"
