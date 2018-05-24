@@ -74,8 +74,8 @@ class AddOrderInfo extends \Magento\Framework\App\Action\Action
 //        $customer=$this->cartHelper->getCurrentCustomer()->getCustomer();
         $customer=$this->customerSession->getCustomer();
 //        var_dump($customer->getData());
+        $repos=$this->cartHelper->getCustomerRepos();
         if(!$customer->getFirstname()){
-            $repos=$this->cartHelper->getCustomerRepos();
             $customer=$this->_objectManager->create('Magento\Customer\Model\Customer')->load($context->getValue(\Cleargo\AigleClearomniConnector\Model\Customer\Context::CONTEXT_CUSTOMER_ID));
         }
         if(!$customer->getFirstname()){
