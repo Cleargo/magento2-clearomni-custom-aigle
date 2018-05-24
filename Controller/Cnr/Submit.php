@@ -141,7 +141,7 @@ class Submit extends \Magento\Framework\App\Action\Action
                 "email"=> $customer->getEmail(),
                 "prefix"=> $customer->getPrefix(),
                 "region_code"=> $address['region_id'],
-                "telephone"=>$customerData->getCustomAttribute('vip_tel_1')?$customerData->getCustomAttribute('vip_tel_1')->getValue():'00000000',
+                "telephone"=>$customerData->getCustomAttribute('vip_tel_2')?$customerData->getCustomAttribute('vip_tel_2')->getValue():'00000000',
             ],
             "shipping_method_code"=> "smilestoredelivery",
             "shipping_carrier_code"=> "smilestoredelivery"
