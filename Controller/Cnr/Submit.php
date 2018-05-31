@@ -97,7 +97,7 @@ class Submit extends \Magento\Framework\App\Action\Action
     {
 
         $params=$this->getRequest()->getParams();
-        $retailer=$this->retailerRepository->get($this->customerSession->getStore(),$this->storeManager->getDefaultStoreView()->getId());
+        $retailer=$this->retailerRepository->get($this->customerSession->getStore(),$this->storeManager->getStore()->getId());
         $address=$retailer->getExtensionAttributes()->getAddress()->getData();
         $context = $this->_objectManager->get('Magento\Framework\App\Http\Context');
         $customer=$this->customerSession->getCustomer();

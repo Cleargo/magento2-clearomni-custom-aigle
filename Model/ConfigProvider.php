@@ -50,7 +50,7 @@ class ConfigProvider implements \Magento\Checkout\Model\ConfigProviderInterface
         $config = [];
         try {
 //            var_dump($this->ccHelper->getCustomerSession()->getRetailerId());
-            $retailer = $this->retailerRepository->get($this->ccHelper->getCustomerSession()->getRetailerId(), $this->storeManager->getDefaultStoreView()->getId());
+            $retailer = $this->retailerRepository->get($this->ccHelper->getCustomerSession()->getRetailerId(), $this->storeManager->getStore()->getId());
             $config['currentStore'] = $this->ccHelper->getCustomerSession()->getRetailerId();
             $config['currentStoreDetail'] = $retailer->getData();
             $config['currentStoreDetail']['address'] = $retailer->getExtensionAttributes()->getAddress()->getData();

@@ -63,7 +63,7 @@ class Set extends \Magento\Framework\App\Action\Action
     public function execute()
     {
         $params=$this->getRequest()->getParams();
-        $retailer=$this->retailerRepository->get($params['store'],$this->storeManager->getDefaultStoreView()->getId());
+        $retailer=$this->retailerRepository->get($params['store'],$this->storeManager->getStore()->getId());
         $address=$retailer->getExtensionAttributes()->getAddress()->getData();
         $this->customerSession->setRetailerId($params['store']);
         $data=[];

@@ -67,7 +67,7 @@ class AddOrderInfo extends \Magento\Framework\App\Action\Action
     {
         $params=$this->getRequest()->getParams();
         $this->customerSession->setStore($params['store']);
-        $retailer=$this->retailerRepository->get($params['store'],$this->storeManager->getDefaultStoreView()->getId());
+        $retailer=$this->retailerRepository->get($params['store'],$this->storeManager->getStore()->getId());
         $address=$retailer->getExtensionAttributes()->getAddress()->getData();
         $context = $this->_objectManager->get('Magento\Framework\App\Http\Context');
 //        $isLoggedIn = $context->getValue(\Magento\Customer\Model\Context::CONTEXT_AUTH);
