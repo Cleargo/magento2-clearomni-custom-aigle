@@ -141,6 +141,7 @@ class CheckReserve extends \Magento\Framework\App\Action\Action
         if ($this->customerSession->isLoggedIn()) {
             $this->searchCriteria=$this->_searchCriteria
                 ->addFilter('state','processing')
+                ->addFilter('status','processing_canceled','neq')
                 ->addFilter('customer_id',$this->customerSession->getCustomer()->getId())->create();
             $list = $this->orderRepository->getList($this->searchCriteria);
 //                    echo $list->getSelect();
