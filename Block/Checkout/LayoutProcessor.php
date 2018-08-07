@@ -76,6 +76,27 @@ class LayoutProcessor implements \Magento\Checkout\Block\Checkout\LayoutProcesso
             unset($jsLayout['components']['checkout']['children']['steps']['children']['shipping-step']
                 ['children']['shippingAddress']['children']['shipping-address-fieldset']['children']['city']);
         }
+
+        // change vip_area = phone area code
+        $jsLayout['components']['checkout']['children']['steps']['children']['shipping-step']
+        ['children']['shippingAddress']['children']['shipping-address-fieldset']['children']['telephone']['label'] = null;
+        $jsLayout['components']['checkout']['children']['steps']['children']['shipping-step']
+        ['children']['shippingAddress']['children']['shipping-address-fieldset']['children']['vip_area']['label'] = __('Mobile No.');
+        $jsLayout['components']['checkout']['children']['steps']['children']['shipping-step']
+        ['children']['shippingAddress']['children']['shipping-address-fieldset']['children']['vip_area']['options'] = [
+            [
+                'value' => '614',
+                'label' => 'HK +852',
+            ],
+            [
+                'value' => '616',
+                'label' => 'MO +853',
+            ],
+            [
+                'value' => '615',
+                'label' => 'CN +86',
+            ],
+        ];
         //billing
 //        if(isset($jsLayout['components']['checkout']['children']['steps']['children']['billing-step']['children']['payment']['children'])){
 //            foreach ($jsLayout['components']['checkout']['children']['steps']['children']['billing-step']['children']['payment']['children']['payments-list']['children'] as $key=>$value) {
