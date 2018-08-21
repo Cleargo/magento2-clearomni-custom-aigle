@@ -81,6 +81,17 @@ class LayoutProcessor implements \Magento\Checkout\Block\Checkout\LayoutProcesso
         $jsLayout['components']['checkout']['children']['steps']['children']['shipping-step']
         ['children']['shippingAddress']['children']['shipping-address-fieldset']['children']['telephone']['label'] = null;
         $jsLayout['components']['checkout']['children']['steps']['children']['shipping-step']
+        ['children']['shippingAddress']['children']['shipping-address-fieldset']['children']['telephone']['validation'] = [
+            'validate-checkout-tel' => true,
+        ];
+/*        [
+            'required-entry' => true,
+            'min_text_length' => 1,
+            'max_text_length' => 255,
+            'validate-checkout-tel' => true,
+        ];*/
+
+        $jsLayout['components']['checkout']['children']['steps']['children']['shipping-step']
         ['children']['shippingAddress']['children']['shipping-address-fieldset']['children']['vip_area']['label'] = __('Mobile No.');
         $jsLayout['components']['checkout']['children']['steps']['children']['shipping-step']
         ['children']['shippingAddress']['children']['shipping-address-fieldset']['children']['vip_area']['options'] = [
